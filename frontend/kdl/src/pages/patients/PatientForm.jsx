@@ -4,7 +4,7 @@ import Sidebar from "../Sidebar";
 
 function PatientForm() {
     return (
-        <Sidebar />
+        <div className='patient_div'></div>
     );
 }
 
