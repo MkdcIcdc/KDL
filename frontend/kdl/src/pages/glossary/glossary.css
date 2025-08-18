@@ -1,0 +1,597 @@
+.body {
+    margin: 0;
+    display: flex;
+}
+
+/* Стили для навбара */
+.nav-panel {
+    position: relative;
+    width: 356px;
+    height: 100vh;
+    background-color: #D5DDEB;
+    align-self: start;
+    overflow-x: hidden;
+    transition: width 0.3s ease;
+    min-width: 80px;
+}
+
+/* основной текст */
+.nav-main-text {
+    font-size: 22px;
+    color: #000000;
+    font-weight: bold;
+    padding: 53px 33px 40px 58px;
+    transition: font-size 0.3s ease;
+    line-height: 27px;
+}
+
+p {
+    margin: 0;
+}
+
+.nav-panel nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    /* animation */
+    overflow: hidden;
+    max-height: 1000px;
+    opacity: 1;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-panel nav ul li {
+    font-size: 20px;
+}
+
+.nav-list.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+.nav-item {
+    display: block;
+    padding: 15px 0 15px 58px;
+    color: #0C2348;
+    border-top: 1px solid #ffffff;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #99B5E3;
+    border-top: none;
+}
+
+.nav-item.active {
+    background-color: #B0C4E7;
+    border-top: none;
+}
+
+
+/* свернутое состояние панели */
+.nav-panel.collapsed {
+    width: 64px;
+}
+
+.nav-panel.collapsed .nav-main-text {
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 20px 0;
+}
+
+/* кнопка */
+.close-btn {
+    position: absolute;
+    display: flex;
+    border: none;
+    align-items: center;
+    background-color: #D5DDEB;
+    cursor: pointer;
+    justify-content: center;
+    width: 24px;
+    height: 50px;
+    top: 528px;
+    right: 0;
+    transition: transform 0.5s ease;
+}
+
+.close-icon {
+    transition: transform 0.3s ease;
+}
+
+/* Поворот картинки */
+.close-btn img {
+    transition: transform 0.3s ease;
+}
+
+.close-btn.rotated .close-icon {
+    transform: rotate(180deg);
+}
+
+/* контент */
+.main-container {
+    flex-grow: 1;
+}
+
+.head {
+    height: 142px;
+    flex-grow: 1;
+    background-color: #ffffff;
+    padding: 0;
+}
+
+/* Стили дял Верхнего меню в Базе знаний */
+.table-div {
+    display: flex;
+    flex-direction: row;
+    height: 44px;
+    margin: 0 233px 0 91px;
+}
+
+.tables {
+    display: flex;
+    font-size: 20px;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+    color: #0C2348;
+    transition: border-color 0.2s ease;
+    height: 44px;
+    text-decoration: none;
+}
+
+.tables.active {
+    border-bottom: 1px solid #0047BA;
+    color: #0047BA;
+    cursor: pointer;
+}
+
+.table-name {
+    display: flex;
+    height: 32px;
+    width: 600px;
+    flex-grow: 1;
+    margin: 91px 0 74px 91px;
+}
+
+.table-name-btn {
+    display: flex;
+    border: none;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: #ffffff;
+    cursor: pointer;
+    width: 36px;
+    transition: transform 0.5s ease;
+    padding: 0;
+}
+
+.table-name-text {
+    font-family: Arial;
+    font-size: 20px;
+    color: #0C2348;
+    display: flex;
+    align-items: center;
+}
+
+/* Стили для таблиц Глоссариев*/
+.main-table {
+    width: 615px;
+    margin: 0 0 0 91px;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.main-table th, td {
+    border: 1px solid black;
+}
+
+.col-1-head {
+    font-family: Arial;
+    font-size: 16px;
+    color: #0C2348;
+    width: 5%;
+    text-align: center;
+    padding: 0 10px 0 10px;
+    background-color: #E8F1FF;
+}
+
+.col-2-head {
+    font-family: Arial;
+    font-size: 16px;
+    color: #0C2348;
+    width: 85%;
+    padding: 15px 427px 15px 36px;
+    background-color: #E8F1FF;
+}
+
+.col-1 {
+    font-family: Arial;
+    font-size: 16px;
+    color: #0C2348;
+    width: 5%;
+    text-align: center;
+    padding: 0 10px 0 10px;
+}
+
+.col-2 {
+    font-family: Arial;
+    font-size: 16px;
+    color: #0C2348;
+    width: 85%;
+    padding: 15px 13px 15px 36px;
+
+}
+
+.edit-btn {
+    background-color: #ffffff;
+    border: none;
+    float: right;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+.pagination-container {
+    width: 615px;
+    margin: 36px 0 0 91px;
+}
+
+.add-btn {
+    width: 615px;
+    height: 48px;
+    background-color: #0047BA;
+    align-items: center;
+    border: none;
+    color: white;
+    font-size: 16px;
+    margin: 74px 0 0 91px;
+    cursor: pointer;
+}
+
+.edit-input {
+    font: inherit;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+    width: 100%;
+}
+
+.edit-controls {
+    margin: 74px 0 0 91px;
+    width: 615px;
+}
+
+.save-btn {
+    width: 296px;
+    margin: 0 0 0 0;
+    height: 48px;
+    cursor: pointer;
+    border: none;
+    background-color: #0047BA;
+    font-size: 16px;
+    color: white;
+}
+
+.cancel-btn {
+    width: 296px;
+    margin: 0 0 0 23px;
+    height: 48px;
+    border: none;
+    cursor: pointer;
+    background-color: #6A8BB9;
+    font-size: 16px;
+    color: white;
+}
+
+/* Стили для перечня глоссариев */
+.glossary-list {
+    margin: 91px 233px 0 91px;
+}
+
+.glossary-items {
+    list-style: none;
+    padding: 0;
+}
+
+.glossary-item {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    height: 48px;
+    border-bottom: 1px solid #0C2348;
+}
+
+.glossary-link {
+    font-size: 20px;
+    color: #0C2348;
+    text-decoration: none;
+    padding-left: 36px;
+    flex-grow: 1;
+    width: 100%;
+}
+
+/* Пагинация */
+.pagination {
+    gap: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.pagination button {
+    /*padding: 6px 10px;*/
+    margin: 0;
+    width: 29px;
+    height: 38px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    min-width: 35px;
+    font-size: 16px;
+    /*border-radius: 4px;*/
+    transition: background-color 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.pagination .active-page {
+    background-color: #99B5E3;
+    color: #000000;
+    border-color: #99B5E3;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pag-btn-icon-left {
+    height: 11px;
+}
+
+.pag-btn-icon-right {
+    height: 11px;
+    transform: rotate(180deg);
+}
+
+/* Стили для справочника состояний */
+.data-table {
+    border-collapse: collapse;
+    min-width: 1400px; /* или как надо */
+    width: auto;
+}
+
+.table-data-head{
+    height: 62px;
+    background: #95B4E7;
+    font-size: 16px;
+    color: #0C2348;
+    font-weight: bold;
+    padding: 0 12px;
+}
+
+.table-data-body{
+    height: 48px;
+    font-size: 16px;
+    padding: 0 12px;
+}
+
+.data-table th, .data-table td {
+    border: 1px solid #ddd;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.table-selector{
+    margin: 74px 0 0 79px;
+}
+
+.p-column-toggle-btn{
+    font-size: 16px;
+    color: #7891B3;
+}
+.column-toggle-btn {
+    margin-top: 9px;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+    width: 367px;
+    height: 48px;
+    border: 1px solid #7E9AC2;
+    background: none;
+    color: #97ACCA;
+}
+
+.column-menu {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    background: #fefefe;
+    border: 1px solid #ccc;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    max-height: 590px;
+    width: 365px;
+    overflow-y: auto;
+    z-index: 10;
+    margin: 76px 0 0 79px;
+    font-family: Arial, sans-serif;
+}
+
+.column-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #516584;
+    background-color: #fafafa;
+    transition: background-color 0.2s, border 0.2s;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 15px 0 15px 10px;
+}
+
+/* скрыть нативный чекбокс */
+.column-menu-item input[type="checkbox"] {
+    display: none;
+}
+
+/* контейнер для кастомного чекбокса */
+.checkbox-wrapper {
+    position: relative;
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #516584;
+    background-color: white;
+}
+
+/* галочка (псевдоэлемент) */
+.checkbox-wrapper::after {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #516584;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* показать галочку, если input:checked */
+.column-menu-item input[type="checkbox"]:checked + .checkbox-wrapper::after {
+    opacity: 1;
+}
+
+.column-menu::-webkit-scrollbar {
+    width: 18px;
+    background-color: #D5DDEB;
+}
+
+.column-menu::-webkit-scrollbar-thumb{
+    background-color: #6A8BB9;
+}
+
+.column-menu::-webkit-scrollbar-button:vertical:decrement{
+    width: 16px;
+    height: 16px;
+    background-size: 16px 16px;
+    background-image: url('../../buttons/up_arrow.svg'); /* ↑ */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.column-menu::-webkit-scrollbar-button:vertical:increment {
+    width: 16px;
+    height: 16px;
+    background-size: 16px 16px;
+    background-image: url('../../buttons/down_arrow.svg'); /* ↓ */
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.filter-btn{
+    margin: 5px 0 0 48px;
+    width: 132px;
+    height: 48px;
+    background-color: #6A8BB9;
+    border: none;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between; /* или space-between, если хочешь отступ между текстом и иконкой */
+    gap: 8px;
+    font-weight: bold;
+}
+
+.filter-icon{
+    margin-left: 25px;
+    padding: 0;
+    vertical-align: middle;
+}
+
+.filter{
+    position: absolute;
+    width: 402px;
+    height: 555px;
+    background-color: white;
+    border: 1px solid #ccc;
+    margin: 0 0 0 360px;
+    z-index: 10;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown{
+    display: flex;
+    flex-direction: column;
+    margin: 28px 30px 0 31px;
+    gap: 4px;
+}
+
+.dd-label{
+    font-size: 16px;
+    color: #7891B3;
+}
+
+.dd-select{
+    height: 48px;
+    padding: 0;
+    width: 100%;
+    min-width: 150px;
+}
+
+.state-add-btn{
+    width: 201px;
+    height: 48px;
+    border: none;
+    background-color: white;
+    color: #0047BA;
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 715px;
+    cursor: pointer;
+}
+
+.state-pencil-icon{
+    width: 16px;
+    height: 16px;
+    margin-left: 16px;
+    vertical-align: middle;
+}
+
+.scroll-container {
+    overflow-x: auto;
+    cursor: grab;
+    user-select: none;
+    white-space: nowrap;
+    margin: 64px 0 0 79px;
+    height: 100%;
+    width: 1460px; /* увеличенная ширина */
+    box-sizing: border-box;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    display: block;
+}
+
+.scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-container table {
+    min-width: 1400px; /* увеличить ширину таблицы (пример) */
+    border-collapse: collapse;
+}
+
+.pagination-container-state{
+    margin: 40px 0 0 0;
+}
