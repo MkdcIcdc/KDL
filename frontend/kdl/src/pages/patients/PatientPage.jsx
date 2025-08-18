@@ -1,13 +1,14 @@
 import React from "react";
 import PatientForm from "./PatientForm";
 import '../glossary/glossary.css';
-import Layout from "../Layout";
+import PatientLayout from "../PatientLayout";
+
 
 function PatientPage() {
     return (
-        <Layout>
+        <PatientLayout>
             <PatientForm />
-        </Layout>
+        </PatientLayout>
     );
 }
 
