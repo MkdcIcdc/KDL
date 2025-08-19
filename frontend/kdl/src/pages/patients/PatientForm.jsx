@@ -1,26 +1,47 @@
 import React from "react";
-import {NavLink, useNavigate} from "react-router-dom";
-import Sidebar from "../Sidebar";
+import { useNavigate } from "react-router-dom";
 
 function PatientForm() {
-    return (
-        <table className='patient-list'>
-            <thead>
-            <tr>
-                <th className='table-data-head'>ФИО пациента</th>
-                <th className='table-data-head'>Дата рождения</th>
-                <th className='table-data-head'>Пол</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td className='pl-body-data'>Бутаков Никита Сергеевич</td>
-                <td className='pl-body-data'>26.08.1998</td>
-                <td className='pl-body-data'>Мужской</td>
-            </tr>
+    const navigate = useNavigate();
 
-            </tbody>
-        </table>
+    const patient = {
+        id: 1,
+        name: "Иванов Иван Иванович",
+        birthDate: "01.01.1970",
+        gender: "Мужской",
+        passport: "9999 999999"
+    };
+
+    return (
+        <main>
+            <div className="patient-header"></div>
+            <table className="patient-list">
+                <thead>
+                <tr>
+                    <th className="table-data-head">№</th>
+                    <th className="table-data-head">ФИО пациента</th>
+                    <th className="table-data-head">Дата рождения</th>
+                    <th className="table-data-head">Пол</th>
+                    <th className="table-data-head">Серия и номер паспорта</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td className="pl-body-data">{patient.id}</td>
+                        <td
+                            className="pl-body-data"
+                            onClick={() => navigate(`/patients/${patient.id}`)}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {patient.name}
+                        </td>
+                        <td className="pl-body-data">{patient.birthDate}</td>
+                        <td className="pl-body-data">{patient.gender}</td>
+                        <td className="pl-body-data">{patient.passport}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </main>
     );
 }
 
