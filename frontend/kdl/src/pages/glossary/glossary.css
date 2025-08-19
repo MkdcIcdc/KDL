@@ -115,7 +115,7 @@ p {
 }
 
 .head {
-    height: 142px;
+    height: 147px;
     flex-grow: 1;
     background-color: #ffffff;
     padding: 0;
@@ -598,8 +598,15 @@ p {
 
 /* для страницы пациента */
 
+.patient-header{
+    width: 100%;
+    height: 115px;
+    background-color: red;
+}
+
 .patient-list{
     border-collapse: collapse;
+    margin-left: 91px;
 }
 
 .patient-list th, td{
@@ -608,7 +615,97 @@ p {
 
 .pl-body-data{
     vertical-align: center;
-     text-align: center;
+    text-align: center;
     padding: 12px;
     font-size: 16px;
+}
+
+.patient-card{
+    width: 85%;
+    height: 115px;
+    margin: 0 0 0 91px;
+    border: 1px solid white;
+    background-color: white;
+}
+
+.pdd-head{
+    margin: 15px 0 0 48px;
+}
+
+.pdd-head td{
+    font-size: 24px;
+    color: #0C2348;
+}
+
+.pdd-body{
+    border-collapse: collapse;
+    margin: 18px 0 0 48px;
+}
+
+.pdd-body th, td{
+    border-collapse: collapse;
+    padding: 0 30px 0 0;
+    border: none;
+    text-align: start;
+}
+
+.pdd-body th {
+    color: #6A8BB9;
+    font-weight: normal;
+}
+
+.pdd-body td{
+    color: #0C2348;
+}
+
+.patient-analiz{
+    width: 85%;
+    min-height: 115px;
+    background-color: white;
+    margin: 30px 0 0 91px;
+    border: 1px solid white;
+}
+
+.lab-data-head{
+    color: #0C2348;
+    font-size: 24px;
+    padding: 24px 0 0 48px;
+}
+
+.ld-main{
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.ld-main::-webkit-details-marker {
+  display: none;
+}
+
+.lab-data-head[open] summary img.arrow {
+  transform: rotate(180deg);
+}
+
+.ld-body{
+    font-size: 20px;
+    padding-top: 20px;
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.ld-body::-webkit-details-marker {
+  display: none;
+}
+
+.dates[open] summary img.dates-arrow {
+  transform: rotate(180deg);
+}
+
+.detail-lab-data{
+    margin: 40px 0 0 107px;
 }
