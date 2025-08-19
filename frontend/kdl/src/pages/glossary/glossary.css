@@ -601,7 +601,7 @@ p {
 .patient-header{
     width: 100%;
     height: 115px;
-    background-color: red;
+    /*background-color: red;*/
 }
 
 .patient-list{
