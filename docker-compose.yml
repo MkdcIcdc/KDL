@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    env_file: .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./KDL
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./KDL:/KDL
+    env_file: .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/kdl:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
