@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import './glossary/glossary.css';
-import { NavLink } from "react-router-dom";
 import Sidebar from "./Sidebar";
 
 function PatientLayout({ children }) {
