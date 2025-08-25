@@ -20,7 +20,7 @@ function GlossaryDetailForm() {
     const inputRef = useRef(null);
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:8000/api/${id}/`)
+        fetch(`/api/${id}/`)
             .then(res => res.json())
             .then(data => {
                 const processedEntries = data.map((item, idx) => ({
@@ -65,8 +65,8 @@ function GlossaryDetailForm() {
             : { name: editValue, num: entry.num };
 
         const url = isNew
-            ? `http://127.0.0.1:8000/api/${id}/`
-            : `http://127.0.0.1:8000/api/${id}/${entry.id}/`;
+            ? `/api/${id}/`
+            : `/${id}/${entry.id}/`;
 
         const method = isNew ? 'POST' : 'PATCH';
 
