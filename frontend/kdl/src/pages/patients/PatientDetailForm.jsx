@@ -1,7 +1,10 @@
 import React, {useEffect} from "react";
 import arrow from '../../buttons/up_arrow.svg'
+import {useNavigate} from "react-router-dom";
 
 function PatientDetailForm() {
+    const navigate = useNavigate();
+
     useEffect(() => {
         // выбираем элементы из Layout
         const bodyEl = document.querySelector(".body");
@@ -25,8 +28,14 @@ function PatientDetailForm() {
                     <table className='pdd-head'>
                         <tbody>
                         <tr>
-                            <td>№ 1</td>
-                            <td>Иванов Иван Иванович</td>
+                            <td className='pdd-head-arrow'
+                                onClick={() => navigate(`/patients/`)}
+                                style={{ cursor: "pointer" }}
+                            >
+                                <img className='patient-arrow' src={arrow} alt=''/>
+                            </td>
+                            <td className='pdd-head-item'>№ 1</td>
+                            <td className='pdd-head-item'>Иванов Иван Иванович</td>
                         </tr>
                         </tbody>
                     </table>
