@@ -53,7 +53,7 @@ export default function TableWithDragAndColumnSelector() {
     // Загружаем все справочники
     useEffect(() => {
         dropdownFields.forEach(field => {
-            fetch(`http://127.0.0.1:8000/api/${dropdownApiEndpoints[field]}/`)
+            fetch(`/api/${dropdownApiEndpoints[field]}/`)
                 .then(res => res.json())
                 .then(data => setDropdownOptions(prev => ({...prev, [field]: data})))
                 .catch(err => console.error(`Ошибка загрузки ${field}:`, err));
@@ -65,7 +65,7 @@ export default function TableWithDragAndColumnSelector() {
         const fetchEntries = async () => {
             try {
                 // Загружаем записи DOS
-                const res = await fetch("http://127.0.0.1:8000/api/dos/");
+                const res = await fetch("/api/dos/");
                 const data = await res.json();
 
                 // Преобразуем текстовые значения в id по справочникам
@@ -144,8 +144,8 @@ export default function TableWithDragAndColumnSelector() {
         const isNew = String(entry.id).startsWith("temp_");
 
         const url = isNew
-            ? "http://127.0.0.1:8000/api/dos/"
-            : `http://127.0.0.1:8000/api/dos/${entry.id}/`;
+            ? "/api/dos/"
+            : `/api/dos/${entry.id}/`;
 
         const method = isNew ? "POST" : "PUT";
 
@@ -207,7 +207,7 @@ export default function TableWithDragAndColumnSelector() {
                             {isEditing ? (
                                 isDropdown ? (
                                     <DynamicDropdown
-                                        apiUrl={`http://127.0.0.1:8000/api/${dropdownApiEndpoints[col.id]}/`}
+                                        apiUrl={`/api/${dropdownApiEndpoints[col.id]}/`}
                                         fieldName={col.id === "weight" ? "value" : "name"}
                                         label=""
                                         value={entry[col.id] || ""} // <-- передаем только id
@@ -289,11 +289,11 @@ export default function TableWithDragAndColumnSelector() {
                 <div className='filter' tabIndex={0} onBlur={(e) => {
                     if (!e.currentTarget.contains(e.relatedTarget)) setFilterOpen(false);
                 }}>
-                    <DynamicDropdown apiUrl="http://127.0.0.1:8000/api/system/" fieldName="name" label="Системы"
+                    <DynamicDropdown apiUrl="/api/system/" fieldName="name" label="Системы"
                                      value={selectedType} onChange={setSelectedType}/>
-                    <DynamicDropdown apiUrl="http://127.0.0.1:8000/api/organ/" fieldName="name" label="Орган"
+                    <DynamicDropdown apiUrl="/api/organ/" fieldName="name" label="Орган"
                                      value={selectedOrgan} onChange={setSelectedOrgan}/>
-                    <DynamicDropdown apiUrl="http://127.0.0.1:8000/api/state/" fieldName="name" label="Состояние"
+                    <DynamicDropdown apiUrl="/api/state/" fieldName="name" label="Состояние"
                                      value={selectedState} onChange={setSelectedState}/>
                 </div>
             )}
