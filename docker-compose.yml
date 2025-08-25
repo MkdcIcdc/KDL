@@ -11,7 +11,9 @@ services:
 
   backend:
     build: ./KDL
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./KDL:/KDL
     env_file: .env
