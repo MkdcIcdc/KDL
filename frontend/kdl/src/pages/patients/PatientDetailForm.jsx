@@ -1,6 +1,8 @@
 import React, {useEffect} from "react";
 import arrow from '../../buttons/up_arrow.svg'
 import {useNavigate} from "react-router-dom";
+import {Patient} from "./PatientData";
+import LabResultsTable from './LabData'
 
 function PatientDetailForm() {
     const navigate = useNavigate();
@@ -30,7 +32,7 @@ function PatientDetailForm() {
                         <tr>
                             <td className='pdd-head-arrow'
                                 onClick={() => navigate(`/patients/`)}
-                                style={{ cursor: "pointer" }}
+                                style={{cursor: "pointer"}}
                             >
                                 <img className='patient-arrow' src={arrow} alt=''/>
                             </td>
@@ -66,39 +68,29 @@ function PatientDetailForm() {
                         <img className='arrow' src={arrow} alt=''/>
                     </summary>
                     <details className='dates'>
-                        <summary className='ld-body'>20.01.2020 <img className='dates-arrow' src={arrow} alt=''/></summary>
+                        <summary className='ld-body'>20.01.2020 <img className='dates-arrow' src={arrow} alt=''/>
+                        </summary>
                         <div className='detail-lab-data'>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
+                            <LabResultsTable labData={Patient.biochemistry}/>
+                        </div>
+                    </details>
+                    <details className='dates'>
+                        <summary className='ld-body'>23.01.2020 <img className='dates-arrow' src={arrow} alt=''/>
+                        </summary>
+                        <div className='detail-lab-data'>
                             <p>Данные</p>
                         </div>
                     </details>
                     <details className='dates'>
-                        <summary className='ld-body'>23.01.2020 <img className='dates-arrow' src={arrow} alt=''/></summary>
+                        <summary className='ld-body'>25.01.2020 <img className='dates-arrow' src={arrow} alt=''/>
+                        </summary>
                         <div className='detail-lab-data'>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                        </div>
-                    </details>
-                    <details className='dates'>
-                        <summary className='ld-body'>25.01.2020 <img className='dates-arrow' src={arrow} alt=''/></summary>
-                        <div className='detail-lab-data'>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                            <p>Данные</p>
                             <p>Данные</p>
                             <p>Данные</p>
                         </div>
                     </details>
                 </details>
+
             </div>
         </main>
     );

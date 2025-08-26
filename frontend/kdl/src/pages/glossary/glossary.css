@@ -713,6 +713,7 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: start;
+    border-bottom: 1px solid #dddddd;
 }
 
 .ld-body::-webkit-details-marker {
@@ -724,5 +725,50 @@ p {
 }
 
 .detail-lab-data{
-    margin: 40px 0 0 107px;
+    margin: 0 0 0 107px;
+}
+
+.cld-detail{
+    margin-left:300px;
+}
+
+.cld-body{
+    font-size: 20px;
+    padding-top: 20px;
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.cld-body::-webkit-details-marker {
+  display: none;
+}
+
+.cld-head[open] summary img.cld-arrow {
+  transform: rotate(180deg);
+}
+
+.labdata-pa{
+    border-collapse: collapse;
+    border: none;
+}
+
+.labdata-pa th,
+.labdata-pa td{
+    font-size: 18px;
+    border: none;
+    border-bottom: 1px solid #B7B7B7;
+    text-align: start;
+    padding-right: 15px;
+}
+
+.labdata-pa th{
+    color: #0C2348;
+}
+
+.labdata-pa td{
+    font-size: 16px;
+    color: #596E8D;
 }
