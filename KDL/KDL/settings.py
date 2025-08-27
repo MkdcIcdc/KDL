@@ -45,6 +45,9 @@ INSTALLED_APPS = [
     'KDLApi',
     'rest_framework',
     'corsheaders',
+    'employer',
+    'patient',
+    'conclusion',
 ]
 
 MIDDLEWARE = [
