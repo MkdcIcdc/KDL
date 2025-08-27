@@ -1,7 +1,7 @@
 from django.db import models
 
-from KDL.employer.models import Employer
-from KDL.patient.models import Patient, Research
+from employer.models import Employer
+from patient.models import Patient, Research
 
 
 class Conclusion(models.Model):
