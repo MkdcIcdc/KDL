@@ -16,7 +16,7 @@ class Patient(models.Model):
 
 
 class Research(models.Model):
-    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     date = models.DateField(null=True)
     research_name = models.CharField(max_length=50, null=True)
     data = models.TextField(null=True)
