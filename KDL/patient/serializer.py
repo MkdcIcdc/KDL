@@ -3,7 +3,7 @@ from .models import Patient, Research
 
 
 class PatientSerializer(serializers.ModelSerializer):
-    date_birth = serializers.DateTimeField(format='%d.%m.%Y')
+    date_birth = serializers.DateField(format='%d.%m.%Y')
 
     class Meta:
         model = Patient
