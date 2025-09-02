@@ -1,25 +1,23 @@
-import React, {useEffect, useState} from "react";
-import arrow from '../../buttons/up_arrow.svg'
-import {useNavigate} from "react-router-dom";
-import {Patient} from "./PatientData";
-import LabResultsTable from './LabData'
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import arrow from '../../buttons/up_arrow.svg';
+import { Patient } from "./PatientData";
+import LabResultsTable from './LabData';
 
 function PatientDetailForm() {
+    const { id } = useParams();
     const navigate = useNavigate();
-    const [data, SetData] = useState();
+    const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // выбираем элементы из Layout
         const bodyEl = document.querySelector(".body");
         const headEl = document.querySelector(".head");
 
-        // задаём цвета
         if (bodyEl) bodyEl.style.backgroundColor = "#F5F5F5";
         if (headEl) headEl.style.backgroundColor = "#F5F5F5";
 
-        // сброс при размонтировании (уход со страницы)
         return () => {
             if (bodyEl) bodyEl.style.backgroundColor = "";
             if (headEl) headEl.style.backgroundColor = "";
@@ -30,28 +28,37 @@ function PatientDetailForm() {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`api/patients/${id}`);
+                console.log("Загружаем данные пациента с ID:", id);
+
+                const response = await fetch(`/api/patients/${id}`);
+                console.log("Ответ сервера:", response);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const result = await response.json();
-                console.log(result)
-                SetData(result);
+                console.log("Полученные данные:", result);
+                setData(result);
             } catch (err) {
+                console.error("Ошибка при загрузке:", err);
                 setError(err.message);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchData();
-    }, []);
+        if (id) {
+            fetchData();
+        }
+    }, [id]);
+
+    if (loading) return <div className="loading">Загрузка данных пациента...</div>;
+    if (error) return <div className="error">Ошибка: {error}</div>;
+    if (!data) return <div>Данные не найдены</div>;
 
     return (
         <main className='main-p-df'>
-            {data && data.map(item => (
             <div className='patient-card'>
                 <div className='patient-detail-data'>
                     <table className='pdd-head'>
@@ -61,10 +68,10 @@ function PatientDetailForm() {
                                 onClick={() => navigate(`/patients/`)}
                                 style={{cursor: "pointer"}}
                             >
-                                <img className='patient-arrow' src={arrow} alt=''/>
+                                <img className='patient-arrow' src={arrow} alt='Назад'/>
                             </td>
-                            <td className='pdd-head-item'>№ {item.id}</td>
-                            <td className='pdd-head-item'>{item.s_name} {item.name} {item.surname}</td>
+                            <td className='pdd-head-item'>№ {data.id}</td>
+                            <td className='pdd-head-item'>{data.s_name} {data.name} {data.surname}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -80,15 +87,15 @@ function PatientDetailForm() {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{item.gender}</td>
-                        <td>{item.date_birth}</td>
-                        <td>{item.p_series} {item.p_number}</td>
-                        <td>999-999-999 99</td>
+                        <td>{data.gender}</td>
+                        <td>{data.date_birth}</td>
+                        <td>{data.p_series} {data.p_number}</td>
+                        <td>{data.snils || "999-999-999 99"}</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-                        ))}
+
             <div className='patient-analiz'>
                 <details className='lab-data-head'>
                     <summary className='ld-main'>
