@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useParams, useNavigate} from "react-router-dom";
 import arrow from '../../buttons/up_arrow.svg';
-import { Patient } from "./PatientData";
+import {Patient} from "./PatientData";
 import LabResultsTable from './LabData';
 
 function PatientDetailForm() {
-    const { id } = useParams();
+    const {id} = useParams();
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -30,7 +30,8 @@ function PatientDetailForm() {
                 setLoading(true);
                 console.log("Загружаем данные пациента с ID:", id);
 
-                const response = await fetch(`/api/patients/${id}`);
+                const response = await fetch(`/api/patient/${id}/`);
+
                 console.log("Ответ сервера:", response);
 
                 if (!response.ok) {
@@ -52,6 +53,7 @@ function PatientDetailForm() {
             fetchData();
         }
     }, [id]);
+
 
     if (loading) return <div className="loading">Загрузка данных пациента...</div>;
     if (error) return <div className="error">Ошибка: {error}</div>;
