@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import arrow from '../../buttons/up_arrow.svg'
 import {useNavigate} from "react-router-dom";
 import {Patient} from "./PatientData";
@@ -6,6 +6,9 @@ import LabResultsTable from './LabData'
 
 function PatientDetailForm() {
     const navigate = useNavigate();
+    const [data, SetData] = useState();
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         // выбираем элементы из Layout
@@ -23,8 +26,32 @@ function PatientDetailForm() {
         };
     }, []);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch(`api/patients/${id}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log(result)
+                SetData(result);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <main className='main-p-df'>
+            {data && data.map(item => (
             <div className='patient-card'>
                 <div className='patient-detail-data'>
                     <table className='pdd-head'>
@@ -36,8 +63,8 @@ function PatientDetailForm() {
                             >
                                 <img className='patient-arrow' src={arrow} alt=''/>
                             </td>
-                            <td className='pdd-head-item'>№ 1</td>
-                            <td className='pdd-head-item'>Иванов Иван Иванович</td>
+                            <td className='pdd-head-item'>№ {item.id}</td>
+                            <td className='pdd-head-item'>{item.s_name} {item.name} {item.surname}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -53,14 +80,15 @@ function PatientDetailForm() {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Мужской</td>
-                        <td>01.01.1970</td>
-                        <td>9999 999999</td>
+                        <td>{item.gender}</td>
+                        <td>{item.date_birth}</td>
+                        <td>{item.p_series} {item.p_number}</td>
                         <td>999-999-999 99</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
+                        ))}
             <div className='patient-analiz'>
                 <details className='lab-data-head'>
                     <summary className='ld-main'>
