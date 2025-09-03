@@ -5,7 +5,7 @@ from .views import (
     PriorityViewSet, WeightViewSet, RecViewSet, DOSViewSet
 )
 
-from patient.views import PatientViewSet
+from patient.views import PatientViewSet, PatientsListViewSet
 
 router = DefaultRouter()
 
@@ -27,6 +27,7 @@ router.register(r'rec', RecViewSet)
 router.register(r'dos', DOSViewSet)
 
 # Пациенты
+router.register(r'patients', PatientsListViewSet)
 router.register(r'patient', PatientViewSet)
 
 urlpatterns = router.urls
