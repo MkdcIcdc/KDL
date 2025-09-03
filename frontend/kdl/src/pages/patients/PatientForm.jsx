@@ -1,8 +1,11 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 function PatientForm() {
     const navigate = useNavigate();
+    const [data, setData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const patient = {
         id: 1,
@@ -11,6 +14,36 @@ function PatientForm() {
         gender: "Мужской",
         passport: "9999 999999"
     };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                console.log("Загружаем данные пациента с ID:", id);
+
+                const response = await fetch(`/api/patients/`);
+
+                console.log("Ответ сервера:", response);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log("Полученные данные:", result);
+                setData(result);
+            } catch (err) {
+                console.error("Ошибка при загрузке:", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+    if (loading) return <div className="loading">Загрузка списка пациентов...</div>;
+    if (error) return <div className="error">Ошибка: {error}</div>;
+    if (!data) return <div>Данные не найдены</div>;
 
     return (
         <main>
@@ -26,19 +59,19 @@ function PatientForm() {
                 </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="pl-body-data">{patient.id}</td>
-                        <td
-                            className="pl-body-data"
-                            onClick={() => navigate(`/patients/${patient.id}`)}
-                            style={{ cursor: "pointer" }}
-                        >
-                            {patient.name}
-                        </td>
-                        <td className="pl-body-data">{patient.birthDate}</td>
-                        <td className="pl-body-data">{patient.gender}</td>
-                        <td className="pl-body-data">{patient.passport}</td>
-                    </tr>
+                <tr>
+                    <td className="pl-body-data">{patient.id}</td>
+                    <td
+                        className="pl-body-data"
+                        onClick={() => navigate(`/patients/${patient.id}`)}
+                        style={{cursor: "pointer"}}
+                    >
+                        {patient.name}
+                    </td>
+                    <td className="pl-body-data">{patient.birthDate}</td>
+                    <td className="pl-body-data">{patient.gender}</td>
+                    <td className="pl-body-data">{patient.passport}</td>
+                </tr>
                 </tbody>
             </table>
         </main>
