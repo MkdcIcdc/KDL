@@ -13,7 +13,7 @@ function PatientForm() {
                 setLoading(true);
                 console.log("Загружаем список пациентов");
 
-                const response = await fetch(`/api/patients/`);
+                const response = await fetch(`/api/patient/`);
 
                 console.log("Ответ сервера:", response);
 
@@ -51,9 +51,9 @@ function PatientForm() {
                 </tr>
                 </thead>
                 <tbody>
-                {data.map((patient, index) => (
+                {data.map((patient) => (
                     <tr key={patient.id}>
-                        <td className="pl-body-data">{index + 1}</td>
+                        <td className="pl-body-data">{patient.id}</td>
                         <td
                             className="pl-body-data"
                             onClick={() => navigate(`/patients/${patient.id}`)}

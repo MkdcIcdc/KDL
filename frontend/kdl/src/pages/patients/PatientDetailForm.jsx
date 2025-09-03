@@ -30,7 +30,7 @@ function PatientDetailForm() {
                 setLoading(true);
                 console.log("Загружаем данные пациента с ID:", id);
 
-                const response = await fetch(`/api/patients/${id}/`);
+                const response = await fetch(`/api/patient/${id}/`);
 
                 console.log("Ответ сервера:", response);
 
