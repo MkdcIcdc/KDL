@@ -27,7 +27,7 @@ router.register(r'rec', RecViewSet)
 router.register(r'dos', DOSViewSet)
 
 # Пациенты
-router.register(r'patients', PatientsListViewSet)
-router.register(r'patient', PatientViewSet)
+router.register(prefix=r'patients', viewset=PatientsListViewSet, basename='patients')
+router.register(prefix=r'patient', viewset=PatientViewSet, basename='patient')
 
 urlpatterns = router.urls
