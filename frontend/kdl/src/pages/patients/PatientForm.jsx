@@ -7,19 +7,19 @@ function PatientForm() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const patient = {
+    /*const patient = {
         id: 1,
         name: "Иванов Иван Иванович",
         birthDate: "01.01.1970",
         gender: "Мужской",
         passport: "9999 999999"
-    };
+    };*/
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                console.log("Загружаем данные пациента с ID:", id);
+                console.log("Загружаем список пациентов");
 
                 const response = await fetch(`/api/patients/`);
 
@@ -60,17 +60,17 @@ function PatientForm() {
                 </thead>
                 <tbody>
                 <tr>
-                    <td className="pl-body-data">{patient.id}</td>
+                    <td className="pl-body-data">{data.id}</td>
                     <td
                         className="pl-body-data"
                         onClick={() => navigate(`/patients/${patient.id}`)}
                         style={{cursor: "pointer"}}
                     >
-                        {patient.name}
+                        {data.s_name} {data.name} {data.surname}
                     </td>
-                    <td className="pl-body-data">{patient.birthDate}</td>
-                    <td className="pl-body-data">{patient.gender}</td>
-                    <td className="pl-body-data">{patient.passport}</td>
+                    <td className="pl-body-data">{data.date_birth}</td>
+                    <td className="pl-body-data">{data.gender}</td>
+                    <td className="pl-body-data">{data.p_series} {data.p_number}</td>
                 </tr>
                 </tbody>
             </table>
