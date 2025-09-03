@@ -5,7 +5,7 @@ from .views import (
     PriorityViewSet, WeightViewSet, RecViewSet, DOSViewSet
 )
 
-from patient.views import PatientViewSet, PatientsListViewSet
+from patient.views import PatientViewSet
 
 router = DefaultRouter()
 

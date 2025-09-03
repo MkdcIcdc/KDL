@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from .models import Patient
-from .serializer import PatientSerializer, PatientsListSerializer
+from .serializer import PatientSerializer
 
 
 class PatientViewSet(viewsets.ModelViewSet):
