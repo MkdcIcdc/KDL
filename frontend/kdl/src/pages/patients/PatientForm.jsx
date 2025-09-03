@@ -7,14 +7,6 @@ function PatientForm() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    /*const patient = {
-        id: 1,
-        name: "Иванов Иван Иванович",
-        birthDate: "01.01.1970",
-        gender: "Мужской",
-        passport: "9999 999999"
-    };*/
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -59,19 +51,21 @@ function PatientForm() {
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td className="pl-body-data">{data.id}</td>
-                    <td
-                        className="pl-body-data"
-                        onClick={() => navigate(`/patients/${patient.id}`)}
-                        style={{cursor: "pointer"}}
-                    >
-                        {data.s_name} {data.name} {data.surname}
-                    </td>
-                    <td className="pl-body-data">{data.date_birth}</td>
-                    <td className="pl-body-data">{data.gender}</td>
-                    <td className="pl-body-data">{data.p_series} {data.p_number}</td>
-                </tr>
+                {data.map((patient, index) => (
+                    <tr key={patient.id}>
+                        <td className="pl-body-data">{index + 1}</td>
+                        <td
+                            className="pl-body-data"
+                            onClick={() => navigate(`/patients/${patient.id}`)}
+                            style={{cursor: "pointer"}}
+                        >
+                            {patient.s_name} {patient.name} {patient.surname}
+                        </td>
+                        <td className="pl-body-data">{patient.date_birth}</td>
+                        <td className="pl-body-data">{patient.gender}</td>
+                        <td className="pl-body-data">{patient.p_series} {patient.p_number}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </main>
