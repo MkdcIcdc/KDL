@@ -26,6 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    "backend",
     "localhost",
     "127.0.0.1",
     "172.14.1.18",
