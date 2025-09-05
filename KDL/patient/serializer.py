@@ -1,3 +1,4 @@
+from collections import defaultdict
 from rest_framework import serializers
 from .models import Patient, Research
 
