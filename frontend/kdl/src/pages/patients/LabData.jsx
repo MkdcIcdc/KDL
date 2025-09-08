@@ -2,7 +2,6 @@ import React from 'react';
 import arrow from "../../buttons/up_arrow.svg";
 
 const LabResultsTable = ({ research }) => {
-    // Проверяем, что данные существуют и имеют правильную структуру
     if (!research || !research.data || research.data.length === 0) {
         return (
             <details className='cld-head'>

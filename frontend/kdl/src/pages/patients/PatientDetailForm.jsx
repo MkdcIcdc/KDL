@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import arrow from '../../buttons/up_arrow.svg';
-import {Patient} from "./PatientData";
 import LabResultsTable from './LabData';
 
 function PatientDetailForm() {
@@ -11,6 +10,19 @@ function PatientDetailForm() {
     const [researchData, setResearchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const transformResearchData = (apiData) => {
+        return apiData.map(research => ({
+            research_name: research.research_name,
+            date: research.date,
+            // Преобразуем data_parsed объект в массив
+            data: Object.values(research.data_parsed || {}).map(item => ({
+                name: item.name,
+                value: item.value,
+                unit: item.unit
+            }))
+        }));
+    };
 
     useEffect(() => {
         const bodyEl = document.querySelector(".body");
@@ -34,7 +46,7 @@ function PatientDetailForm() {
                 // Параллельная загрузка данных
                 const [patientResponse, researchResponse] = await Promise.all([
                     fetch(`/api/patient/${id}/`),
-                    fetch(`/api/research/?patient=${+id}`) // Убрали лишний слеш
+                    fetch(`/api/research/?patient=${+id}`)
                 ]);
 
                 // Проверка ответов
@@ -54,7 +66,8 @@ function PatientDetailForm() {
                 console.log("Полученные данные исследований:", researchResult);
 
                 setPatientData(patientResult);
-                setResearchData(researchResult);
+                // ПРИМЕНЯЕМ ТРАНСФОРМАЦИЮ К ДАННЫМ
+                setResearchData(transformResearchData(researchResult));
             } catch (err) {
                 console.error("Ошибка при загрузке:", err);
                 setError(err.message);
@@ -120,7 +133,16 @@ function PatientDetailForm() {
 
                     {researchData && researchData.length > 0 ? (
                         researchData.map((research, index) => (
-                            <LabResultsTable key={index} research={research}/>
+                            <details key={index} className='dates'>
+                                <summary className='ld-body'>
+                                    {research.date || "Дата не указана"}
+                                    <img className='dates-arrow' src={arrow} alt=''/>
+                                </summary>
+                                <div className='detail-lab-data'>
+                                    {/* Передаем research как пропс */}
+                                    <LabResultsTable research={research} />
+                                </div>
+                            </details>
                         ))
                     ) : (
                         <div>Нет данных исследований</div>
