@@ -9,7 +9,7 @@ class PatientViewSet(viewsets.ModelViewSet):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
 
-
+'''
 class ResearchViewSet(viewsets.ModelViewSet):
     queryset = Research.objects.all()
     serializer_class = ResearchSerializer
@@ -23,3 +23,15 @@ class ResearchViewSet(viewsets.ModelViewSet):
         # Используем кастомный сериализатор для группировки
         serializer = GroupedResearchSerializer(queryset, many=False)
         return Response(serializer.data)
+'''
+
+class ResearchViewSet(viewsets.ModelViewSet):
+    serializer_class = ResearchSerializer
+
+    def get_queryset(self):
+        queryset = Research.objects.all()
+        patient = self.request.query_params.get('patient')
+        if patient:
+            queryset = queryset.filter(patient=patient)
+        return queryset
+

@@ -12,6 +12,8 @@ class PatientSerializer(serializers.ModelSerializer):
 
 
 class ResearchSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format='%d.%m.%Y')
+
     class Meta:
         model = Research
         fields = '__all__'
