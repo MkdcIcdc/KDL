@@ -54,6 +54,36 @@ function PatientDetailForm() {
         }
     }, [id]);
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                console.log("Загружаем данные пациента с ID:", id);
+
+                const response = await fetch(`/api/patient/?patinet=${id}/`);
+
+                console.log("Ответ сервера:", response);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                console.log("Полученные данные:", result);
+                setData(result);
+            } catch (err) {
+                console.error("Ошибка при загрузке:", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchData();
+        }
+    }, [id]);
+
 
     if (loading) return <div className="loading">Загрузка данных пациента...</div>;
     if (error) return <div className="error">Ошибка: {error}</div>;
