@@ -7,7 +7,8 @@ import LabResultsTable from './LabData';
 function PatientDetailForm() {
     const {id} = useParams();
     const navigate = useNavigate();
-    const [data, setData] = useState(null);
+    const [patientData, setPatientData] = useState(null);
+    const [researchData, setResearchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -25,22 +26,35 @@ function PatientDetailForm() {
     }, []);
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchAllData = async () => {
             try {
                 setLoading(true);
                 console.log("Загружаем данные пациента с ID:", id);
 
-                const response = await fetch(`/api/patient/${id}/`);
+                // Параллельная загрузка данных
+                const [patientResponse, researchResponse] = await Promise.all([
+                    fetch(`/api/patient/${id}/`),
+                    fetch(`/api/research/?patient=${+id}`) // Убрали лишний слеш
+                ]);
 
-                console.log("Ответ сервера:", response);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Проверка ответов
+                if (!patientResponse.ok) {
+                    throw new Error(`HTTP error! status: ${patientResponse.status}`);
+                }
+                if (!researchResponse.ok) {
+                    throw new Error(`HTTP error! status: ${researchResponse.status}`);
                 }
 
-                const result = await response.json();
-                console.log("Полученные данные:", result);
-                setData(result);
+                const [patientResult, researchResult] = await Promise.all([
+                    patientResponse.json(),
+                    researchResponse.json()
+                ]);
+
+                console.log("Полученные данные пациента:", patientResult);
+                console.log("Полученные данные исследований:", researchResult);
+
+                setPatientData(patientResult);
+                setResearchData(researchResult);
             } catch (err) {
                 console.error("Ошибка при загрузке:", err);
                 setError(err.message);
@@ -50,44 +64,13 @@ function PatientDetailForm() {
         };
 
         if (id) {
-            fetchData();
+            fetchAllData();
         }
     }, [id]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                console.log("Загружаем данные пациента с ID:", id);
-
-                const response = await fetch(`/api/patient/?patinet=${id}/`);
-
-                console.log("Ответ сервера:", response);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log("Полученные данные:", result);
-                setData(result);
-            } catch (err) {
-                console.error("Ошибка при загрузке:", err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (id) {
-            fetchData();
-        }
-    }, [id]);
-
 
     if (loading) return <div className="loading">Загрузка данных пациента...</div>;
     if (error) return <div className="error">Ошибка: {error}</div>;
-    if (!data) return <div>Данные не найдены</div>;
+    if (!patientData) return <div>Данные пациента не найдены</div>;
 
     return (
         <main className='main-p-df'>
@@ -102,8 +85,8 @@ function PatientDetailForm() {
                             >
                                 <img className='patient-arrow' src={arrow} alt='Назад'/>
                             </td>
-                            <td className='pdd-head-item'>№ {data.id}</td>
-                            <td className='pdd-head-item'>{data.s_name} {data.name} {data.surname}</td>
+                            <td className='pdd-head-item'>№ {patientData.id}</td>
+                            <td className='pdd-head-item'>{patientData.s_name} {patientData.name} {patientData.surname}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -119,10 +102,10 @@ function PatientDetailForm() {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>{data.gender}</td>
-                        <td>{data.date_birth}</td>
-                        <td>{data.p_series} {data.p_number}</td>
-                        <td>{data.snils || "999-999-999 99"}</td>
+                        <td>{patientData.gender}</td>
+                        <td>{patientData.date_birth}</td>
+                        <td>{patientData.p_series} {patientData.p_number}</td>
+                        <td>{patientData.snils || "999-999-999 99"}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -134,30 +117,15 @@ function PatientDetailForm() {
                         Лабораторные данные
                         <img className='arrow' src={arrow} alt=''/>
                     </summary>
-                    <details className='dates'>
-                        <summary className='ld-body'>20.01.2020 <img className='dates-arrow' src={arrow} alt=''/>
-                        </summary>
-                        <div className='detail-lab-data'>
-                            <LabResultsTable labData={Patient.biochemistry}/>
-                        </div>
-                    </details>
-                    <details className='dates'>
-                        <summary className='ld-body'>23.01.2020 <img className='dates-arrow' src={arrow} alt=''/>
-                        </summary>
-                        <div className='detail-lab-data'>
-                            <p>Данные</p>
-                        </div>
-                    </details>
-                    <details className='dates'>
-                        <summary className='ld-body'>25.01.2020 <img className='dates-arrow' src={arrow} alt=''/>
-                        </summary>
-                        <div className='detail-lab-data'>
-                            <p>Данные</p>
-                            <p>Данные</p>
-                        </div>
-                    </details>
-                </details>
 
+                    {researchData && researchData.length > 0 ? (
+                        researchData.map((research, index) => (
+                            <LabResultsTable key={index} research={research}/>
+                        ))
+                    ) : (
+                        <div>Нет данных исследований</div>
+                    )}
+                </details>
             </div>
         </main>
     );
