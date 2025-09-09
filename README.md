@@ -35,8 +35,9 @@ go mod init my-sqlite-app
 go get modernc.org/sqlite
 go get github.com/gorilla/mux
 go get github.com/rs/cors
-2. Запуск приложения
-bash
+```
+### 2. Запуск приложения
+```bash
 # Простой запуск
 go run main.go
 ```
