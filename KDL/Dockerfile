@@ -1,5 +1,5 @@
 # Используем официальный Python
-FROM python:3.11-slim
+FROM python:3.11
 
 # Устанавливаем зависимости
 WORKDIR /app
