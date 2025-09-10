@@ -17,24 +17,18 @@
 ✅ Валидация email и проверка уникальности 
 
 ## 🛠 Требования
-Go 1.18 или выше\
-Git для клонирования репозитория\
-PowerShell или curl для тестирования API
+Docker \
+Python 3.11 или выше \
+PostgreSQL 15 или выше \
+NodeJS 20 или выше \
+Git для клонирования репозитория
 
 ## 🚀 Установка и запуск
 ### 1. Клонирование и настройка
 ```bash
 # Клонируйте репозиторий
-git clone <your-repo-url>
-cd my-sqlite-app
-
-# Инициализируйте Go модуль (если нужно)
-go mod init my-sqlite-app
-
-# Установите зависимости
-go get modernc.org/sqlite
-go get github.com/gorilla/mux
-go get github.com/rs/cors
+git clone https://github.com/MkdcIcdc/KDL.git
+cd KDL
 ```
 ### 2. Запуск приложения
 ```bash
