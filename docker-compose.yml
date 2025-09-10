@@ -8,7 +8,10 @@ services:
       - "5434:5432"
 
   backend:
-    build: ./KDL
+    build:
+      context: ./KDL
+      dockerfile: Dockerfile
+    image: kdl_backend
     command: >
       sh -c "sleep 5 && python manage.py migrate --noinput &&
              python manage.py runserver 0.0.0.0:8000"
@@ -21,7 +24,10 @@ services:
       - db
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: kdl_frontend
     ports:
       - "3000:3000"
     volumes:
@@ -29,6 +35,8 @@ services:
       - /app/node_modules
     environment:
       - CHOKIDAR_USEPOLLING=true
+      - HOST=0.0.0.0
+      - PORT=3000
     depends_on:
       - backend
 
