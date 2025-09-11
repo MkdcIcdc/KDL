@@ -15,4 +15,4 @@ class Conclusion(models.Model):
     conc_file = models.FilePathField(null=True)
 
     class Meta:
-        db_table = 'Conclusion'
+        db_table = 'conclusion'

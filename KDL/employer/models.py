@@ -11,17 +11,17 @@ class BaseModel(models.Model):
 
 class Department(BaseModel):
     class Meta:
-        db_table = 'Department'
+        db_table = 'department'
 
 
 class JT(BaseModel):
     class Meta:
-        db_table = 'JT'
+        db_table = 'jt'
 
 
 class Role(BaseModel):
     class Meta:
-        db_table = 'Role'
+        db_table = 'role'
 
 
 class Employer(models.Model):
@@ -33,7 +33,7 @@ class Employer(models.Model):
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
 
     class Meta:
-        db_table = 'Employer'
+        db_table = 'employer'
 
 
 class AD(models.Model):
@@ -42,4 +42,4 @@ class AD(models.Model):
     pwd = models.CharField(max_length=50, null=True)
 
     class Meta:
-        db_table = 'AD'
+        db_table = 'ad'

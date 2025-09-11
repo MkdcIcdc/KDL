@@ -13,7 +13,7 @@ class Patient(models.Model):
     medstat_id = models.CharField(max_length=50, null=True)
 
     class Meta:
-        db_table = 'Patient'
+        db_table = 'patient'
 
 
 class Research(models.Model):
@@ -23,7 +23,7 @@ class Research(models.Model):
     data = models.TextField(null=True)
 
     class Meta:
-        db_table = 'Research'
+        db_table = 'research'
 
 
 

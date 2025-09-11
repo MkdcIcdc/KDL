@@ -12,54 +12,54 @@ class Glossary(models.Model):
 
 class System(Glossary):
     class Meta:
-        db_table = 'System'
+        db_table = 'system'
 
 class Organ(Glossary):
     class Meta:
-        db_table = 'Organ'
+        db_table = 'organ'
 
 class State(Glossary):
     class Meta:
-        db_table = 'State'
+        db_table = 'state'
 
 class Parameter(Glossary):
     class Meta:
-        db_table = 'Parameter'
+        db_table = 'parameter'
 
 class Gender(Glossary):
     class Meta:
-        db_table = 'Gender'
+        db_table = 'gender'
 
 class POTC(Glossary):
     class Meta:
-        db_table = 'POTC'
+        db_table = 'potc'
 
 class TOD(Glossary):
     class Meta:
-        db_table = 'TOD'
+        db_table = 'tod'
 
 class Deviation(Glossary):
     class Meta:
-        db_table = 'Deviation'
+        db_table = 'deviation'
 
 class Dynamics(Glossary):
     class Meta:
-        db_table = 'Dynamics'
+        db_table = 'dynamics'
 
 class Priority(Glossary):
     class Meta:
-        db_table = 'Priority'
+        db_table = 'priority'
 
 class Weight(models.Model):
     value = models.IntegerField()
     class Meta:
-        db_table = 'Weight'
+        db_table = 'weight'
     def __str__(self):
         return str(self.value)
 
 class Rec(Glossary):
     class Meta:
-        db_table = 'Rec'
+        db_table = 'rec'
 
 class DOS(models.Model):
     system = models.ForeignKey(System, on_delete=models.SET_NULL, null=True)
@@ -87,4 +87,4 @@ class DOS(models.Model):
     rec = models.ForeignKey(Rec, on_delete=models.SET_NULL, null=True)
 
     class Meta:
-        db_table = 'DOS'
+        db_table = 'dos'
