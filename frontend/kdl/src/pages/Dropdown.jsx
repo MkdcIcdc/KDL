@@ -24,7 +24,7 @@ export default function DynamicDropdown({apiUrl, fieldName, label, value, onChan
               value={value !== undefined && value !== null ? String(value) : ""}
               onChange={(e) => onChange(Number(e.target.value))}
           >
-            <option value="">-- выберите --</option>
+            <option value="">-- выберете --</option>
             {options.map(opt => (
                 <option key={opt.id} value={String(opt.id)}>
                   {opt[fieldName]}
