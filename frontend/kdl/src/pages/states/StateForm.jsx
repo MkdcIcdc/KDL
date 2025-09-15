@@ -259,7 +259,7 @@ export default function TableWithDragAndColumnSelector() {
                 <button className="column-toggle-btn" onClick={() => setMenuOpen(prev => !prev)}>
                     Выбрать
                 </button>
-                <button className="filter-btn" onClick={() => setFilterOpen(prev => !prev)}>
+                <button className="filter-btn" /*onClick={() => setFilterOpen(prev => !prev)}*/>
                     Фильтр <img className="filter-icon" src={filter} alt="filter-icon"/>
                 </button>
                 <button className='state-add-btn' onClick={handleAddEntry}>
