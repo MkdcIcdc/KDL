@@ -15,7 +15,7 @@ class ResearchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Research
-        fields = ['patient', 'date', 'research_name', 'data_parsed']
+        fields = ['id', 'patient', 'date', 'research_name', 'data_parsed']
 
     def get_data_parsed(self, obj):
         """Метод для парсинга данных"""
