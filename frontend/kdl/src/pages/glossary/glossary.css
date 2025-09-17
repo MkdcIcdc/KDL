@@ -599,8 +599,95 @@ p {
 /* для страницы пациента */
 
 .patient-header{
-    width: 100%;
+    margin-left: 91px;
+    width: 600px;
     height: 115px;
+    background-color: #99B5E3;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.patient-search-btn,
+.patient-add-btn{
+    background-color: #7E9AC2;
+    width: 250px;
+    height: 48px;
+    border: none;
+    font-size: 16px;
+}
+
+.patient-search-btn:hover,
+.patient-add-btn:hover{
+    background-color: #6A8BB9;
+}
+
+.add-window-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.add-window {
+    background-color: #F5F5F5;
+    padding: 30px;
+    width: 600px;
+    height: 35vh;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-container {
+    position: relative;
+    margin: 15px 0;
+    width: 570px;
+}
+
+.search-item{
+    margin-top: 0;
+    padding: 16px 10px 6px 10px;
+    width: 100%;
+    height: 48px;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.search-item-label {
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    font-size: 20px;
+    color: #999;
+    pointer-events: none;
+    transition: 0.2s ease all;
+}
+
+/* Стили для поднятого label */
+.search-item:focus ~ .search-item-label,
+.search-item:not(:placeholder-shown) ~ .search-item-label{
+    top: -10px;
+    left: 10px;
+    font-size: 14px;
+    color: #6A8BB9;
+    background: #F5F5F5;
+    padding: 0 5px;
+    transform: none; /* Убираем transform если он мешает */
+}
+
+.search-item:focus {
+    outline: none;
+    border: 2px solid #6A8BB9;
 }
 
 .patient-list{

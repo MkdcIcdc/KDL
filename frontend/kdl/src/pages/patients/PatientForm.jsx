@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import AddForm from "./AddForm";
 
 function PatientForm() {
     const navigate = useNavigate();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,7 +42,17 @@ function PatientForm() {
 
     return (
         <main>
-            <div className="patient-header"></div>
+            <div className="patient-header">
+                <button className='patient-search-btn'>
+                    Найти пациента
+                </button>
+                <button className='patient-add-btn' onClick={() => setIsModalOpen(true)}>
+                    Добавить пациента
+                </button>
+            </div>
+
+            <AddForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            </AddForm>
 
             {/* Сообщение об ошибке, если backend недоступен */}
             {error && (

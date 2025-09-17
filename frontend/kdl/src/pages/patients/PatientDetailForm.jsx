@@ -141,6 +141,9 @@ function PatientDetailForm() {
                                 <div className='detail-lab-data'>
                                     {/* Передаем research как пропс */}
                                     <LabResultsTable research={research} />
+                                    <butoon className='conclusion-btn'>
+                                        Сформировать заключение
+                                    </butoon>
                                 </div>
                             </details>
                         ))
