@@ -10,11 +10,12 @@ function PatientDetailForm() {
     const [researchData, setResearchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [param1, setParam1] = useState('');
-    const [result, setResult] = useState('');
+    const [results, setResults] = useState({}); // ✅ Объект для хранения результатов по researchId
+    const [loadingResearch, setLoadingResearch] = useState(null); // ✅ ID исследования в процессе загрузки
 
     const transformResearchData = (apiData) => {
         return apiData.map(research => ({
+            id: research.id,
             research_name: research.research_name,
             date: research.date,
             // Преобразуем data_parsed объект в массив
@@ -88,30 +89,45 @@ function PatientDetailForm() {
     if (!patientData) return <div>Данные пациента не найдены</div>;
 
 
-    const getConclusion = async () => {
-        setLoading(true);
+    const getConclusion = async (researchId) => {
+        setLoadingResearch(researchId); // ✅ Устанавливаем какой research загружается
         try {
-            const response = await fetch('/api/conclusion/run_function', {
+            console.log("Отправляем research ID:", researchId);
+
+            const response = await fetch('/api/conclusion/run_function/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    id: id
+                    param: researchId,
                 })
             });
+
+            console.log("Статус ответа:", response.status);
 
             if (!response.ok) {
                 throw new Error('Ошибка запроса');
             }
 
             const data = await response.json();
-            setResult(data.result);
+            console.log("Полученные данные:", data);
+
+            // ✅ Сохраняем результат для конкретного researchId
+            setResults(prevResults => ({
+                ...prevResults,
+                [researchId]: data.result
+            }));
+
         } catch (error) {
             console.error('Ошибка:', error);
-            setResult('Произошла ошибка');
+            // ✅ Сохраняем ошибку для конкретного researchId
+            setResults(prevResults => ({
+                ...prevResults,
+                [researchId]: 'Произошла ошибка: ' + error.message
+            }));
         } finally {
-            setLoading(false);
+            setLoadingResearch(null); // ✅ Сбрасываем состояние загрузки
         }
     };
 
@@ -163,7 +179,7 @@ function PatientDetailForm() {
 
                     {researchData && researchData.length > 0 ? (
                         researchData.map((research, index) => (
-                            <details key={index} className='dates'>
+                            <details key={research.id || index} className='dates'>
                                 <summary className='ld-body'>
                                     {research.date || "Дата не указана"}
                                     <img className='dates-arrow' src={arrow} alt=''/>
@@ -171,12 +187,16 @@ function PatientDetailForm() {
                                 <div className='detail-lab-data'>
                                     {/* Передаем research как пропс */}
                                     <LabResultsTable research={research} />
-                                    <button className='conclusion-btn' onClick={getConclusion} >
-                                        Сформировать заключение
+                                    <button
+                                        className='conclusion-btn'
+                                        onClick={() => getConclusion(research.id)}
+                                        disabled={loadingResearch === research.id} // ✅ Блокируем кнопку при загрузке
+                                    >
+                                        {loadingResearch === research.id ? 'Формируем...' : 'Сформировать заключение'}
                                     </button>
-                                    {result &&(
+                                    {results[research.id] && (
                                         <div>
-                                            <strong>Результат:</strong> {result}
+                                            <strong>Результат:</strong> {results[research.id]}
                                         </div>
                                     )}
                                 </div>
