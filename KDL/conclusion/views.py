@@ -6,6 +6,7 @@ from .serializer import ConclusionSerializer
 from lab_data_interpreter import interpreter
 from dotenv import load_dotenv
 import os
+from .conc_docx.main import from_db, create_word_document
 
 load_dotenv(".env")
 class ConclusionViewSet(viewsets.ModelViewSet):
@@ -26,6 +27,8 @@ class ConclusionViewSet(viewsets.ModelViewSet):
             },
             research_id=param
         )
+        from_db_list = from_db(param)
+        create_word_document(list(from_db_list))
         try:
             result = f'Good! Param {param}'
             return Response({
