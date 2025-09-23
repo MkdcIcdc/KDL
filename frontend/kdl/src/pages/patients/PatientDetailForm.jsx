@@ -10,6 +10,8 @@ function PatientDetailForm() {
     const [researchData, setResearchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [param1, setParam1] = useState('');
+    const [result, setResult] = useState('');
 
     const transformResearchData = (apiData) => {
         return apiData.map(research => ({
@@ -85,6 +87,34 @@ function PatientDetailForm() {
     if (error) return <div className="error">Ошибка: {error}</div>;
     if (!patientData) return <div>Данные пациента не найдены</div>;
 
+
+    const getConclusion = async () => {
+        setLoading(true);
+        try {
+            const response = await fetch('/api/conclusion/run_function', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Ошибка запроса');
+            }
+
+            const data = await response.json();
+            setResult(data.result);
+        } catch (error) {
+            console.error('Ошибка:', error);
+            setResult('Произошла ошибка');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <main className='main-p-df'>
             <div className='patient-card'>
@@ -141,9 +171,14 @@ function PatientDetailForm() {
                                 <div className='detail-lab-data'>
                                     {/* Передаем research как пропс */}
                                     <LabResultsTable research={research} />
-                                    <butoon className='conclusion-btn'>
+                                    <button className='conclusion-btn' onClick={getConclusion} >
                                         Сформировать заключение
-                                    </butoon>
+                                    </button>
+                                    {result &&(
+                                        <div>
+                                            <strong>Результат:</strong> {result}
+                                        </div>
+                                    )}
                                 </div>
                             </details>
                         ))
