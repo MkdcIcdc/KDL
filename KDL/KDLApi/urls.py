@@ -6,6 +6,7 @@ from .views import (
 )
 
 from patient.views import PatientViewSet, ResearchViewSet
+from conclusion.views import ConclusionViewSet
 
 router = DefaultRouter()
 
@@ -31,5 +32,8 @@ router.register(prefix=r'patient', viewset=PatientViewSet, basename='patient')
 
 # Результаты анализов КДЛ пациента
 router.register(prefix=r'research', viewset=ResearchViewSet, basename='research')
+
+# Заключение по результатам анализов КДЛ
+router.register(prefix=r'conclusion', viewset=ConclusionViewSet, basename='conclusion')
 
 urlpatterns = router.urls

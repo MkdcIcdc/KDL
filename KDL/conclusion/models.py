@@ -10,9 +10,10 @@ class Conclusion(models.Model):
     date_create = models.DateField(auto_now_add=True)
     emp = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True)
     date_save = models.DateTimeField(auto_now=True)
-    inter_result = models.TextField(null=True)
+    inter_results = models.TextField(null=True)
+    raw_data = models.TextField(null=True)
     conc_text = models.TextField(null=True)
-    conc_file = models.FilePathField(null=True)
+    conc_file = models.TextField(null=True)
 
     class Meta:
         db_table = 'conclusion'
