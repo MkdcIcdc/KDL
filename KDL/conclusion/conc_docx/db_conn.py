@@ -1,17 +1,15 @@
 import psycopg2
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from django.conf import settings
 
 def get_db_connection():
+    db_settings = settings.DATABASES['default']
     try:
         return psycopg2.connect(
-            host=os.getenv("DB_HOST"),
-            port=os.getenv("DB_PORT"),
-            database=os.getenv("DB_NAME"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD")
+            host=db_settings['HOST'],
+            port=db_settings['PORT'],
+            database=db_settings['NAME'],
+            user=db_settings['USER'],
+            password=db_settings['PASSWORD']
         )
     except Exception as e:
         print(e)

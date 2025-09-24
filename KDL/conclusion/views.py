@@ -3,15 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import FileResponse
 from django.conf import settings
-import os
 from .models import Conclusion
 from .serializer import ConclusionSerializer
 from lab_data_interpreter import interpreter
-from dotenv import load_dotenv
 from .conc_docx.main import from_db, create_word_document
-
-
-load_dotenv(".env")
 
 
 class ConclusionViewSet(viewsets.ModelViewSet):
@@ -36,17 +31,17 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                 research_id=param,
                 patient_id=patient_id
             )
-
+            db_settings = settings.DATABASES['default']
             interpreter.getState_by_reseach_id_and_save_to_base(
                 param_db={
-                    'host': os.getenv('DB_HOST'),
-                    'port': os.getenv('DB_PORT'),
-                    'database': os.getenv('DB_NAME'),
-                    'user': os.getenv('DB_USER'),
-                    'password': os.getenv('DB_PASSWORD'),
+                    'host': db_settings['HOST'],
+                    'port': db_settings['PORT'],
+                    'database': db_settings['NAME'],
+                    'user': db_settings['USER'],
+                    'password': db_settings['PASSWORD'],
                     'client_encoding': 'utf8',
                 },
-                research_id=param
+                research_id=param,
             )
             try:
                 from_db_list = from_db(param)

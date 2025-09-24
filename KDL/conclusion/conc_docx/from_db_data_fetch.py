@@ -1,5 +1,4 @@
 from .db_conn import get_db_connection
-import json
 
 def get_data(id: int):
     conn = get_db_connection()
@@ -26,16 +25,4 @@ def get_patient(id: int):
         data = cursor.fetchone()
         return data
     finally:
-        conn.close()
-
-def set_data(json_str):
-    conn = get_db_connection()
-    try:
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO test (data) VALUES (%s)", (json.dumps(json_str),))
-        conn.commit()
-    except Exception as e:
-        print(e)
-    finally:
-        cursor.close()
         conn.close()
