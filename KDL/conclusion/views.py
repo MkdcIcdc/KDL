@@ -48,9 +48,14 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                 },
                 research_id=param
             )
-
-            from_db_list = from_db(param)
-            file_path = create_word_document(list(from_db_list))
+            try:
+                from_db_list = from_db(param)
+                file_path = create_word_document(list(from_db_list))
+            except Exception as e:
+                return Response({
+                'status': 'error',
+                'message': str(e)
+            })
 
             # Сохраняем путь к файлу в базе
             conclusion.save_file_path(file_path)
