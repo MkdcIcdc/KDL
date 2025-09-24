@@ -10,12 +10,9 @@ function PatientDetailForm() {
     const [researchData, setResearchData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [results, setResults] = useState({}); // ✅ Объект для хранения результатов по researchId
-    const [loadingResearch, setLoadingResearch] = useState(null); // ✅ ID исследования в процессе загрузки
 
     const transformResearchData = (apiData) => {
         return apiData.map(research => ({
-            id: research.id,
             research_name: research.research_name,
             date: research.date,
             // Преобразуем data_parsed объект в массив
@@ -88,79 +85,6 @@ function PatientDetailForm() {
     if (error) return <div className="error">Ошибка: {error}</div>;
     if (!patientData) return <div>Данные пациента не найдены</div>;
 
-
-    const getConclusion = async (researchId) => {
-        setLoadingResearch(researchId);
-        try {
-            console.log("Отправляем research ID:", researchId);
-
-            const response = await fetch('/api/conclusion/run_function/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    param: researchId,
-                })
-            });
-
-            console.log("Статус ответа:", response.status);
-
-            if (!response.ok) {
-                throw new Error('Ошибка запроса');
-            }
-
-            const data = await response.json();
-            console.log("Полученные данные:", data);
-
-            // ✅ Сохраняем результат для конкретного researchId
-            setResults(prevResults => ({
-                ...prevResults,
-                [researchId]: {
-                    message: data.result.message,
-                    downloadUrl: data.result.download_url, // Оставляем относительный URL
-                    conclusionId: data.result.conclusion_id
-                }
-            }));
-
-        } catch (error) {
-            console.error('Ошибка:', error);
-            setResults(prevResults => ({
-                ...prevResults,
-                [researchId]: {
-                    error: 'Произошла ошибка: ' + error.message
-                }
-            }));
-        } finally {
-            setLoadingResearch(null);
-        }
-    };
-
-    const downloadConclusion = async (conclusionId, filename = 'заключение.docx') => {
-        try {
-            const response = await fetch(`/api/conclusion/${conclusionId}/download/`);
-
-            if (!response.ok) {
-                throw new Error('Ошибка скачивания файла');
-            }
-
-            // Создаем blob и скачиваем
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
-        } catch (error) {
-            console.error('Ошибка скачивания:', error);
-            alert('Ошибка при скачивании файла');
-        }
-    };
-
     return (
         <main className='main-p-df'>
             <div className='patient-card'>
@@ -209,42 +133,17 @@ function PatientDetailForm() {
 
                     {researchData && researchData.length > 0 ? (
                         researchData.map((research, index) => (
-                            <details key={research.id || index} className='dates'>
+                            <details key={index} className='dates'>
                                 <summary className='ld-body'>
                                     {research.date || "Дата не указана"}
                                     <img className='dates-arrow' src={arrow} alt=''/>
                                 </summary>
                                 <div className='detail-lab-data'>
                                     {/* Передаем research как пропс */}
-                                    <LabResultsTable research={research}/>
-                                    <button
-                                        className='conclusion-btn'
-                                        onClick={() => getConclusion(research.id)}
-                                        disabled={loadingResearch === research.id} // ✅ Блокируем кнопку при загрузке
-                                    >
-                                        {loadingResearch === research.id ? 'Формируем...' : 'Сформировать заключение'}
-                                    </button>
-                                    {/*{results[research.id] && (
-                                    <div>
-                                        <strong>Результат:</strong> {results[research.id]}
-                                    </div>
-                                    )}*/}
-                                    {results[research.id] && results[research.id].downloadUrl && (
-                                        <button
-                                            onClick={() => downloadConclusion(results[research.id].conclusionId, `заключение_${research.id}.docx`)}
-                                            style={{
-                                                marginLeft: '10px',
-                                                color: 'blue',
-                                                textDecoration: 'underline',
-                                                border: 'none',
-                                                background: 'none',
-                                                cursor: 'pointer',
-                                                fontSize: '14px'
-                                            }}
-                                        >
-                                            Скачать заключение
-                                        </button>
-                                    )}
+                                    <LabResultsTable research={research} />
+                                    <butoon className='conclusion-btn'>
+                                        Сформировать заключение
+                                    </butoon>
                                 </div>
                             </details>
                         ))
