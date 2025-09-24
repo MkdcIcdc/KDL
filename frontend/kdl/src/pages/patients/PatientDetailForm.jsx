@@ -118,7 +118,7 @@ function PatientDetailForm() {
                 ...prevResults,
                 [researchId]: {
                     message: data.result.message,
-                    downloadUrl: data.result.download_url,
+                    downloadUrl: data.result.download_url, // Оставляем относительный URL
                     conclusionId: data.result.conclusion_id
                 }
             }));
@@ -133,6 +133,31 @@ function PatientDetailForm() {
             }));
         } finally {
             setLoadingResearch(null);
+        }
+    };
+
+    const downloadConclusion = async (conclusionId, filename = 'заключение.docx') => {
+        try {
+            const response = await fetch(`/api/conclusion/${conclusionId}/download/`);
+
+            if (!response.ok) {
+                throw new Error('Ошибка скачивания файла');
+            }
+
+            // Создаем blob и скачиваем
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+        } catch (error) {
+            console.error('Ошибка скачивания:', error);
+            alert('Ошибка при скачивании файла');
         }
     };
 
@@ -204,24 +229,21 @@ function PatientDetailForm() {
                                         <strong>Результат:</strong> {results[research.id]}
                                     </div>
                                     )}*/}
-                                    {results[research.id] && (
-                                        <div>
-                                            <strong>Результат:</strong> {results[research.id].message || results[research.id].error}
-                                            {results[research.id].downloadUrl && (
-                                                <a
-                                                    href={results[research.id].downloadUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    style={{
-                                                        marginLeft: '10px',
-                                                        color: 'blue',
-                                                        textDecoration: 'underline'
-                                                    }}
-                                                >
-                                                    Скачать заключение
-                                                </a>
-                                            )}
-                                        </div>
+                                    {results[research.id] && results[research.id].downloadUrl && (
+                                        <button
+                                            onClick={() => downloadConclusion(results[research.id].conclusionId, `заключение_${research.id}.docx`)}
+                                            style={{
+                                                marginLeft: '10px',
+                                                color: 'blue',
+                                                textDecoration: 'underline',
+                                                border: 'none',
+                                                background: 'none',
+                                                cursor: 'pointer',
+                                                fontSize: '14px'
+                                            }}
+                                        >
+                                            Скачать заключение
+                                        </button>
                                     )}
                                 </div>
                             </details>

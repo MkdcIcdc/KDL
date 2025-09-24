@@ -42,7 +42,7 @@ function PatientForm() {
 
     return (
         <main>
-            <div className="patient-header">
+            {/*<div className="patient-header">
                 <button className='patient-search-btn'>
                     Найти пациента
                 </button>
@@ -50,7 +50,7 @@ function PatientForm() {
                     Добавить пациента
                 </button>
             </div>
-
+            */}
             <AddForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
             </AddForm>
 
