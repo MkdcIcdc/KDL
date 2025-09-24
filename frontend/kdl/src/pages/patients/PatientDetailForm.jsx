@@ -90,7 +90,7 @@ function PatientDetailForm() {
 
 
     const getConclusion = async (researchId) => {
-        setLoadingResearch(researchId); // ✅ Устанавливаем какой research загружается
+        setLoadingResearch(researchId);
         try {
             console.log("Отправляем research ID:", researchId);
 
@@ -116,18 +116,23 @@ function PatientDetailForm() {
             // ✅ Сохраняем результат для конкретного researchId
             setResults(prevResults => ({
                 ...prevResults,
-                [researchId]: data.result
+                [researchId]: {
+                    message: data.result.message,
+                    downloadUrl: data.result.download_url,
+                    conclusionId: data.result.conclusion_id
+                }
             }));
 
         } catch (error) {
             console.error('Ошибка:', error);
-            // ✅ Сохраняем ошибку для конкретного researchId
             setResults(prevResults => ({
                 ...prevResults,
-                [researchId]: 'Произошла ошибка: ' + error.message
+                [researchId]: {
+                    error: 'Произошла ошибка: ' + error.message
+                }
             }));
         } finally {
-            setLoadingResearch(null); // ✅ Сбрасываем состояние загрузки
+            setLoadingResearch(null);
         }
     };
 
@@ -186,7 +191,7 @@ function PatientDetailForm() {
                                 </summary>
                                 <div className='detail-lab-data'>
                                     {/* Передаем research как пропс */}
-                                    <LabResultsTable research={research} />
+                                    <LabResultsTable research={research}/>
                                     <button
                                         className='conclusion-btn'
                                         onClick={() => getConclusion(research.id)}
@@ -194,9 +199,28 @@ function PatientDetailForm() {
                                     >
                                         {loadingResearch === research.id ? 'Формируем...' : 'Сформировать заключение'}
                                     </button>
+                                    {/*{results[research.id] && (
+                                    <div>
+                                        <strong>Результат:</strong> {results[research.id]}
+                                    </div>
+                                    )}*/}
                                     {results[research.id] && (
                                         <div>
-                                            <strong>Результат:</strong> {results[research.id]}
+                                            <strong>Результат:</strong> {results[research.id].message || results[research.id].error}
+                                            {results[research.id].downloadUrl && (
+                                                <a
+                                                    href={results[research.id].downloadUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    style={{
+                                                        marginLeft: '10px',
+                                                        color: 'blue',
+                                                        textDecoration: 'underline'
+                                                    }}
+                                                >
+                                                    Скачать заключение
+                                                </a>
+                                            )}
                                         </div>
                                     )}
                                 </div>
