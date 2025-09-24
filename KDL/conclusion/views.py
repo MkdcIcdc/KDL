@@ -19,6 +19,12 @@ class ConclusionViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def run_function(self, request):
         param = request.data.get('param')
+
+        conclusion, created = Conclusion.objects.get_or_create(
+            research_id=param,
+            defaults={'patient_id': self.get_patient_id_from_research(param)}
+        )
+
         interpreter.getState_by_reseach_id_and_save_to_base(
             param_db={
                 'host': os.getenv('DB_HOST'),
