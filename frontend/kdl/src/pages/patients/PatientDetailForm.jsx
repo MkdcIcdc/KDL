@@ -224,11 +224,6 @@ function PatientDetailForm() {
                                     >
                                         {loadingResearch === research.id ? 'Формируем...' : 'Сформировать заключение'}
                                     </button>
-                                    {/*{results[research.id] && (
-                                    <div>
-                                        <strong>Результат:</strong> {results[research.id]}
-                                    </div>
-                                    )}*/}
                                     {results[research.id] && results[research.id].downloadUrl && (
                                         <button
                                             onClick={() => downloadConclusion(results[research.id].conclusionId, `заключение_${research.id}.docx`)}
