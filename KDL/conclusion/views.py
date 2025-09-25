@@ -99,8 +99,8 @@ class ConclusionViewSet(viewsets.ModelViewSet):
             return None
 
     @action(detail=False, methods=['get'])
-    def by_research(self, request):
-        """Получить заключения по research_id"""
+    def check_conclusion(self, request):
+        """Проверяет наличие заключения по research_id"""
         research_id = request.query_params.get('research_id')
         if not research_id:
             return Response({
@@ -108,9 +108,38 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                 'message': 'Не указан research_id'
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        conclusions = Conclusion.objects.filter(research_id=research_id).order_by('-date_create')
-        serializer = self.get_serializer(conclusions, many=True)
-        return Response({
-            'status': 'success',
-            'results': serializer.data
-        })
+        try:
+            # Ищем существующее заключение
+            conclusion = Conclusion.objects.filter(
+                research_id=research_id,
+                conc_file__isnull=False
+            ).order_by('-date_create').first()
+
+            if conclusion and conclusion.conc_file:
+                # Проверяем, что файл действительно существует
+                file_exists = os.path.exists(conclusion.get_absolute_file_path())
+
+                if file_exists:
+                    return Response({
+                        'status': 'success',
+                        'exists': True,
+                        'conclusion_id': conclusion.id,
+                        'download_url': conclusion.get_file_url(),
+                        'message': 'Заключение уже существует'
+                    })
+                else:
+                    # Файл не существует, удаляем запись
+                    conclusion.conc_file = None
+                    conclusion.save()
+
+            return Response({
+                'status': 'success',
+                'exists': False,
+                'message': 'Заключение не найдено'
+            })
+
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
