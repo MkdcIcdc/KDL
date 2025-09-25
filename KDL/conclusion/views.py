@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.http import FileResponse
 from django.conf import settings
 from .models import Conclusion
+import os
 from .serializer import ConclusionSerializer
 from lab_data_interpreter import interpreter
 from .conc_docx.main import from_db, create_word_document
@@ -43,14 +44,9 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                 },
                 research_id=param,
             )
-            try:
-                from_db_list = from_db(param)
-                file_path = create_word_document(list(from_db_list))
-            except Exception as e:
-                return Response({
-                'status': 'error',
-                'message': str(e)
-            })
+
+            from_db_list = from_db(param)
+            file_path = create_word_document(list(from_db_list))
 
             # Сохраняем путь к файлу в базе
             conclusion.save_file_path(file_path)
