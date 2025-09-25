@@ -4,7 +4,7 @@ def get_data(id: int):
     conn = get_db_connection()
     try:
         cursor = conn.cursor()
-        query_string = 'SELECT inter_results FROM conclusion WHERE research_id = %s'
+        query_string = 'SELECT inter_results FROM conclusion WHERE id = %s'
         cursor.execute(query_string, (id,))
         data = cursor.fetchone()
         return data
@@ -20,7 +20,7 @@ def get_patient(id: int):
                         "patient.gender "
                         "from conclusion "
                         "join patient on conclusion.patient_id = patient.id "
-                        "where conclusion.research_id = %s")
+                        "where conclusion.id = %s")
         cursor.execute(query_string, (id,))
         data = cursor.fetchone()
         return data

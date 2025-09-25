@@ -8,8 +8,6 @@ from django.conf import settings
 def from_db(id: int):
     fromdb = get_data(id)
     data_string = fromdb[0]
-    if data_string.startswith('"') and data_string.endswith('"'):
-        data_string = data_string[1:-1]
 
     try:
         python_data = ast.literal_eval(data_string)

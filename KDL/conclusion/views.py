@@ -27,13 +27,9 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                     'message': 'Исследование не найдено'
                 }, status=status.HTTP_404_NOT_FOUND)
 
-            # Создаем новую запись заключения вместо get_or_create
-            conclusion = Conclusion.objects.create(
-                research_id=param,
-                patient_id=patient_id
-            )
+
             db_settings = settings.DATABASES['default']
-            interpreter.getState_by_reseach_id_and_save_to_base(
+            result_id = interpreter.getState_by_reseach_id_and_save_to_base(
                 param_db={
                     'host': db_settings['HOST'],
                     'port': db_settings['PORT'],
@@ -43,9 +39,11 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                     'client_encoding': 'utf8',
                 },
                 research_id=param,
-            )
+            )[1]
 
-            from_db_list = from_db(param)
+            print(f'Result id: {result_id}')
+            conclusion = Conclusion.objects.get(id=result_id)
+            from_db_list = from_db(result_id)
             file_path = create_word_document(list(from_db_list))
 
             # Сохраняем путь к файлу в базе
@@ -62,10 +60,10 @@ class ConclusionViewSet(viewsets.ModelViewSet):
             }, status=status.HTTP_200_OK)
 
         except Exception as e:
-            return Response({
-                'status': 'error',
-                'message': str(e)
-            }, status=status.HTTP_400_BAD_REQUEST)
+             return Response({
+                 'status': 'error',
+                 'message': str(e)
+             }, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
