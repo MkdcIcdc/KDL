@@ -12,7 +12,7 @@ function PatientDetailForm() {
     const [error, setError] = useState(null);
     const [results, setResults] = useState({}); // ✅ Объект для хранения результатов по researchId
     const [loadingResearch, setLoadingResearch] = useState(null); // ✅ ID исследования в процессе загрузки
-    const [conclusions, setConclusions] = useState({}); // ✅ Храним данные о заключениях
+    const [conclusionStatus, setConclusionStatus] = useState({}); // ✅ Состояние для статусов заключений
 
     const transformResearchData = (apiData) => {
         return apiData.map(research => ({
@@ -72,8 +72,6 @@ function PatientDetailForm() {
                 setPatientData(patientResult);
                 // ПРИМЕНЯЕМ ТРАНСФОРМАЦИЮ К ДАННЫМ
                 setResearchData(transformResearchData(researchResult));
-                // ✅ Проверяем наличие заключений для каждого исследования
-                await checkExistingConclusions(transformedResearch);
             } catch (err) {
                 console.error("Ошибка при загрузке:", err);
                 setError(err.message);
@@ -87,48 +85,47 @@ function PatientDetailForm() {
         }
     }, [id]);
 
+     // ✅ Загружаем статусы при изменении researchData
+    useEffect(() => {
+        const loadAllConclusionStatuses = async () => {
+            if (!researchData) return;
+
+            const statuses = {};
+            for (const research of researchData) {
+                const status = await checkConclusion(research.id);
+                statuses[research.id] = status;
+            }
+            setConclusionStatus(statuses);
+        };
+
+        if (researchData && researchData.length > 0) {
+            loadAllConclusionStatuses();
+        }
+    }, [researchData]);
+
     if (loading) return <div className="loading">Загрузка данных пациента...</div>;
     if (error) return <div className="error">Ошибка: {error}</div>;
     if (!patientData) return <div>Данные пациента не найдены</div>;
 
-
-    const checkExistingConclusions = async (researchList) => {
-        const conclusionsData = {};
-
-        for (const research of researchList) {
-            try {
-                const response = await fetch(`/api/conclusion/check_conclusion/?research_id=${research.id}`);
-                const data = await response.json();
-
-                if (data.status === 'success' && data.exists) {
-                    conclusionsData[research.id] = {
-                        exists: true,
-                        conclusionId: data.conclusion_id,
-                        downloadUrl: data.download_url,
-                        message: data.message
-                    };
-                } else {
-                    conclusionsData[research.id] = {
-                        exists: false,
-                        message: data.message
-                    };
+    const checkConclusion = async (researchID) => {
+        try {
+            const response = await fetch(`/api/conclusion/check_conclusion/?research_id=${researchID}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
-            } catch (error) {
-                console.error(`Ошибка при проверке заключения для research ${research.id}:`, error);
-                conclusionsData[research.id] = {
-                    exists: false,
-                    error: 'Ошибка проверки'
-                };
-            }
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Ошибка при проверке заключения:', error);
+            return { exists: false };
         }
+    }
 
-        setConclusions(conclusionsData);
-    };
-
-    const createConclusion = async (researchId) => {
+    const getConclusion = async (researchId) => {
         setLoadingResearch(researchId);
         try {
-            console.log("Создаем заключение для research ID:", researchId);
+            console.log("Отправляем research ID:", researchId);
 
             const response = await fetch('/api/conclusion/run_function/', {
                 method: 'POST',
@@ -140,31 +137,40 @@ function PatientDetailForm() {
                 })
             });
 
+            console.log("Статус ответа:", response.status);
+
             if (!response.ok) {
-                throw new Error('Ошибка создания заключения');
+                throw new Error('Ошибка запроса');
             }
 
             const data = await response.json();
-            console.log("Заключение создано:", data);
+            console.log("Полученные данные:", data);
 
-            // ✅ Обновляем состояние для этого researchId
-            setConclusions(prev => ({
+            // ✅ Сохраняем результат
+            setResults(prevResults => ({
+                ...prevResults,
+                [researchId]: {
+                    message: data.result.message,
+                    downloadUrl: data.result.download_url,
+                    conclusionId: data.result.conclusion_id
+                }
+            }));
+
+            // ✅ ОБНОВЛЯЕМ СТАТУС ЗАКЛЮЧЕНИЯ ПОСЛЕ УСПЕШНОГО ФОРМИРОВАНИЯ
+            setConclusionStatus(prev => ({
                 ...prev,
                 [researchId]: {
                     exists: true,
-                    conclusionId: data.result.conclusion_id,
-                    downloadUrl: data.result.download_url,
-                    message: data.result.message
+                    download_url: data.result.download_url
                 }
             }));
 
         } catch (error) {
-            console.error('Ошибка создания заключения:', error);
-            setConclusions(prev => ({
-                ...prev,
+            console.error('Ошибка:', error);
+            setResults(prevResults => ({
+                ...prevResults,
                 [researchId]: {
-                    exists: false,
-                    error: 'Ошибка создания: ' + error.message
+                    error: 'Произошла ошибка: ' + error.message
                 }
             }));
         } finally {
@@ -172,14 +178,12 @@ function PatientDetailForm() {
         }
     };
 
-    const downloadConclusion = async (conclusionId, filename = 'заключение.docx') => {
-        try {
-            const response = await fetch(`/api/conclusion/${conclusionId}/download/`);
-
+    const downloadConclusion = async (dUrl, filename) => {
+        try{
+            const response = await fetch(`${dUrl}`);
             if (!response.ok) {
-                throw new Error('Ошибка скачивания файла');
+                throw new Error('Ошибка скачивания файла')
             }
-
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
@@ -189,11 +193,46 @@ function PatientDetailForm() {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-
-        } catch (error) {
-            console.error('Ошибка скачивания:', error);
+        } catch (error){
+            console.log('Ошибка скачивания:', error);
             alert('Ошибка при скачивании файла');
         }
+    };
+
+    const renderConclusionButtons = (researchId) => {
+        const status = conclusionStatus[researchId];
+
+        // Если статус еще не загружен
+        if (!status) {
+            return (
+                <button className='conclusion-btn' disabled>
+                    Проверка...
+                </button>
+            );
+        }
+
+        // Если заключение существует
+        if (status.exists === true) {
+            return (
+                <button
+                    className='conclusion-btn download-btn'
+                    onClick={() => downloadConclusion(status.download_url, `заключение_${researchId}.docx`)}
+                >
+                    Скачать заключение
+                </button>
+            );
+        }
+
+        // Если заключения нет - показываем кнопку формирования
+        return (
+            <button
+                className='conclusion-btn'
+                onClick={() => getConclusion(researchId)}
+                disabled={loadingResearch === researchId}
+            >
+                {loadingResearch === researchId ? 'Формируем...' : 'Сформировать заключение'}
+            </button>
+        );
     };
 
     return (
@@ -243,49 +282,19 @@ function PatientDetailForm() {
                     </summary>
 
                     {researchData && researchData.length > 0 ? (
-                        researchData.map((research, index) => {
-                            const conclusion = conclusions[research.id];
-
-                            return (
-                                <details key={research.id || index} className='dates'>
-                                    <summary className='ld-body'>
-                                        {research.date || "Дата не указана"}
-                                        <img className='dates-arrow' src={arrow} alt=''/>
-                                    </summary>
-                                    <div className='detail-lab-data'>
-                                        <LabResultsTable research={research}/>
-
-                                        {/* ✅ Умное отображение кнопок */}
-                                        {conclusion?.exists ? (
-                                            // Если заключение существует - показываем кнопку скачивания
-                                            <button
-                                                onClick={() => downloadConclusion(conclusion.conclusionId, `заключение_${research.id}.docx`)}
-                                                className='conclusion-btn download-btn'
-                                                style={{backgroundColor: '#28a745'}}
-                                            >
-                                                📥 Скачать заключение
-                                            </button>
-                                        ) : (
-                                            // Если заключения нет - показываем кнопку создания
-                                            <button
-                                                className='conclusion-btn'
-                                                onClick={() => createConclusion(research.id)}
-                                                disabled={loadingResearch === research.id}
-                                            >
-                                                {loadingResearch === research.id ? '⏳ Формируем...' : '✨ Сформировать заключение'}
-                                            </button>
-                                        )}
-
-                                        {/* Сообщения об ошибках */}
-                                        {conclusion?.error && (
-                                            <div style={{color: 'red', marginTop: '10px'}}>
-                                                {conclusion.error}
-                                            </div>
-                                        )}
-                                    </div>
-                                </details>
-                            );
-                        })
+                        researchData.map((research, index) => (
+                            <details key={research.id || index} className='dates'>
+                                <summary className='ld-body'>
+                                    {research.date || "Дата не указана"}
+                                    <img className='dates-arrow' src={arrow} alt=''/>
+                                </summary>
+                                <div className='detail-lab-data'>
+                                    {/* Передаем research как пропс */}
+                                    <LabResultsTable research={research}/>
+                                    {renderConclusionButtons(research.id)}
+                                </div>
+                            </details>
+                        ))
                     ) : (
                         <div>Нет данных исследований</div>
                     )}
