@@ -8,6 +8,9 @@ function PatientForm() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
+    const [searchTerm, setSearchTerm] = useState(''); // состояние для поискового запроса
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -39,20 +42,46 @@ function PatientForm() {
     }, []);
 
     if (loading) return <div className="loading">Загрузка списка пациентов...</div>;
+    const toggleSearch = () => {
+        setIsSearchVisible(!isSearchVisible);
+        // Если скрываем поле поиска, очищаем поисковый запрос
+        if (isSearchVisible) {
+            setIsSearchVisible(!isSearchVisible);
+        }
+    };
+
+    const filteredData = data ? data.filter(patient => {
+        if (!searchTerm.trim()) return true;
+
+        const fullName = `${patient.s_name} ${patient.name} ${patient.surname}`.toLowerCase();
+        return fullName.includes(searchTerm.toLowerCase());
+    }) : [];
 
     return (
         <main>
-            {/*<div className="patient-header">
-                <button className='patient-search-btn'>
-                    Найти пациента
+            <div className="patient-header">
+                <button className='patient-search-btn' onClick={toggleSearch}>
+                    {isSearchVisible ? 'Скрыть поиск' : 'Найти пациента'}
                 </button>
                 <button className='patient-add-btn' onClick={() => setIsModalOpen(true)}>
                     Добавить пациента
                 </button>
             </div>
-            */}
+
             <AddForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
             </AddForm>
+            {isSearchVisible && (
+                <div className='patient-search'>
+                    <input
+                        className='patient-search-input'
+                        type="text"
+                        placeholder="Введите ФИО для поиска..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        autoFocus // автоматический фокус на поле при открытии
+                    />
+                </div>
+            )}
 
             {/* Сообщение об ошибке, если backend недоступен */}
             {error && (
@@ -72,8 +101,8 @@ function PatientForm() {
                 </tr>
                 </thead>
                 <tbody>
-                {data && data.length > 0 ? (
-                    data.map((patient) => (
+                {filteredData && filteredData.length > 0 ? (
+                    filteredData.map((patient) => (
                         <tr key={patient.id}>
                             <td className="pl-body-data">{patient.id}</td>
                             <td
@@ -91,7 +120,8 @@ function PatientForm() {
                 ) : (
                     <tr>
                         <td colSpan="5" className="pl-body-data" style={{textAlign: "center"}}>
-                            {error ? "Backend недоступен" : "Нет данных о пациентах"}
+                            {error ? "Backend недоступен" :
+                             searchTerm ? "Пациенты не найдены" : "Нет данных о пациентах"}
                         </td>
                     </tr>
                 )}
