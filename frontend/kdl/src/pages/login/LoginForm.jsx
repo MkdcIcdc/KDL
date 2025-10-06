@@ -34,7 +34,7 @@ function LoginForm() {
         }
 
         try {
-            const response = await fetch('/api/employer/login/', {
+            const response = await fetch('/api/ad/login/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
