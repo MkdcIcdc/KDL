@@ -8,6 +8,7 @@ from .views import (
 
 from patient.views import PatientViewSet, ResearchViewSet
 from conclusion.views import ConclusionViewSet
+from employer.views import EmployerViewSet, ADViewSet
 
 router = DefaultRouter()
 
@@ -36,5 +37,9 @@ router.register(prefix=r'research', viewset=ResearchViewSet, basename='research'
 
 # Заключение по результатам анализов КДЛ
 router.register(prefix=r'conclusion', viewset=ConclusionViewSet, basename='conclusion')
+
+#Сотрудники
+router.register(prefix=r'employer', viewset=EmployerViewSet, basename='employer')
+router.register(prefix=r'ad', viewset=ADViewSet, basename='ad')
 
 urlpatterns = router.urls

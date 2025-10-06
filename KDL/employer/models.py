@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 class BaseModel(models.Model):
     name = models.CharField(max_length=256, unique=True)
@@ -38,8 +39,14 @@ class Employer(models.Model):
 
 class AD(models.Model):
     emp = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True)
-    login = models.CharField(max_length=50, null=True)
-    pwd = models.CharField(max_length=50, null=True)
+    login = models.CharField(max_length=50, null=True, unique=True)
+    pwd = models.CharField(max_length=128, null=True)  # Увеличиваем для хэша
 
     class Meta:
         db_table = 'ad'
+
+    def set_password(self, raw_password):
+        self.pwd = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.pwd)
