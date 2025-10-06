@@ -8,24 +8,41 @@ function PatientDetailForm() {
     const navigate = useNavigate();
     const [patientData, setPatientData] = useState(null);
     const [researchData, setResearchData] = useState(null);
+    const [groupedResearchData, setGroupedResearchData] = useState({}); // ✅ Группировка по дате
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [results, setResults] = useState({}); // ✅ Объект для хранения результатов по researchId
-    const [loadingResearch, setLoadingResearch] = useState(null); // ✅ ID исследования в процессе загрузки
-    const [conclusionStatus, setConclusionStatus] = useState({}); // ✅ Состояние для статусов заключений
+    const [results, setResults] = useState({});
+    const [loadingResearch, setLoadingResearch] = useState(null);
+    const [conclusionStatus, setConclusionStatus] = useState({});
 
     const transformResearchData = (apiData) => {
         return apiData.map(research => ({
             id: research.id,
             research_name: research.research_name,
             date: research.date,
-            // Преобразуем data_parsed объект в массив
             data: Object.values(research.data_parsed || {}).map(item => ({
                 name: item.name,
                 value: item.value,
                 unit: item.unit
             }))
         }));
+    };
+
+    // ✅ Функция для группировки исследований по дате
+    const groupResearchByDate = (researchArray) => {
+        const grouped = {};
+
+        researchArray.forEach(research => {
+            const date = research.date || "Дата не указана";
+
+            if (!grouped[date]) {
+                grouped[date] = [];
+            }
+
+            grouped[date].push(research);
+        });
+
+        return grouped;
     };
 
     useEffect(() => {
@@ -47,13 +64,11 @@ function PatientDetailForm() {
                 setLoading(true);
                 console.log("Загружаем данные пациента с ID:", id);
 
-                // Параллельная загрузка данных
                 const [patientResponse, researchResponse] = await Promise.all([
                     fetch(`/api/patient/${id}/`),
                     fetch(`/api/research/?patient=${+id}`)
                 ]);
 
-                // Проверка ответов
                 if (!patientResponse.ok) {
                     throw new Error(`HTTP error! status: ${patientResponse.status}`);
                 }
@@ -70,8 +85,12 @@ function PatientDetailForm() {
                 console.log("Полученные данные исследований:", researchResult);
 
                 setPatientData(patientResult);
-                // ПРИМЕНЯЕМ ТРАНСФОРМАЦИЮ К ДАННЫМ
-                setResearchData(transformResearchData(researchResult));
+
+                // Трансформируем и группируем данные
+                const transformedData = transformResearchData(researchResult);
+                setResearchData(transformedData);
+                setGroupedResearchData(groupResearchByDate(transformedData));
+
             } catch (err) {
                 console.error("Ошибка при загрузке:", err);
                 setError(err.message);
@@ -85,7 +104,14 @@ function PatientDetailForm() {
         }
     }, [id]);
 
-     // ✅ Загружаем статусы при изменении researchData
+    // ✅ Обновляем группировку при изменении researchData
+    useEffect(() => {
+        if (researchData) {
+            setGroupedResearchData(groupResearchByDate(researchData));
+        }
+    }, [researchData]);
+
+    // ✅ Загружаем статусы при изменении researchData
     useEffect(() => {
         const loadAllConclusionStatuses = async () => {
             if (!researchData) return;
@@ -146,7 +172,6 @@ function PatientDetailForm() {
             const data = await response.json();
             console.log("Полученные данные:", data);
 
-            // ✅ Сохраняем результат
             setResults(prevResults => ({
                 ...prevResults,
                 [researchId]: {
@@ -156,7 +181,6 @@ function PatientDetailForm() {
                 }
             }));
 
-            // ✅ ОБНОВЛЯЕМ СТАТУС ЗАКЛЮЧЕНИЯ ПОСЛЕ УСПЕШНОГО ФОРМИРОВАНИЯ
             setConclusionStatus(prev => ({
                 ...prev,
                 [researchId]: {
@@ -202,7 +226,6 @@ function PatientDetailForm() {
     const renderConclusionButtons = (researchId) => {
         const status = conclusionStatus[researchId];
 
-        // Если статус еще не загружен
         if (!status) {
             return (
                 <button className='conclusion-btn' disabled>
@@ -211,7 +234,6 @@ function PatientDetailForm() {
             );
         }
 
-        // Если заключение существует
         if (status.exists === true) {
             return (
                 <button
@@ -223,7 +245,6 @@ function PatientDetailForm() {
             );
         }
 
-        // Если заключения нет - показываем кнопку формирования
         return (
             <button
                 className='conclusion-btn'
@@ -281,17 +302,20 @@ function PatientDetailForm() {
                         <img className='arrow' src={arrow} alt=''/>
                     </summary>
 
-                    {researchData && researchData.length > 0 ? (
-                        researchData.map((research, index) => (
-                            <details key={research.id || index} className='dates'>
+                    {Object.keys(groupedResearchData).length > 0 ? (
+                        Object.entries(groupedResearchData).map(([date, researches]) => (
+                            <details key={date} className='dates'>
                                 <summary className='ld-body'>
-                                    {research.date || "Дата не указана"}
+                                    {date}
                                     <img className='dates-arrow' src={arrow} alt=''/>
                                 </summary>
                                 <div className='detail-lab-data'>
-                                    {/* Передаем research как пропс */}
-                                    <LabResultsTable research={research}/>
-                                    {renderConclusionButtons(research.id)}
+                                    {researches.map((research, index) => (
+                                        <div key={research.id || index} className='research-item'>
+                                            <LabResultsTable research={research}/>
+                                            {renderConclusionButtons(research.id)}
+                                        </div>
+                                    ))}
                                 </div>
                             </details>
                         ))
