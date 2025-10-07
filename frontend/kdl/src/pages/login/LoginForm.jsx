@@ -40,7 +40,7 @@ function LoginForm() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    username: formData.login,
+                    login: formData.login,
                     password: formData.password
                 }),
                 credentials: 'include' // Для работы с сессиями/cookies
