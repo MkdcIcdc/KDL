@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import './login.css';
+import eye from '../../buttons/eye.svg';
+import eye_closed from '../../buttons/eye_closed.svg';
 
 function LoginForm() {
     const [formData, setFormData] = useState({
@@ -11,6 +13,7 @@ function LoginForm() {
     const [error, setError] = useState('');
     const [submitted, setSubmitted] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChange = (field, value) => {
         setFormData(prev => ({
@@ -73,14 +76,24 @@ function LoginForm() {
                         className={`login-input ${submitted && !formData.login ? 'input-error' : ''}`}
                         disabled={loading}
                     />
-                    <input
-                        type="password"
-                        placeholder="Пароль"
-                        value={formData.password}
-                        onChange={(e) => handleChange('password', e.target.value)}
-                        className={`login-input ${submitted && !formData.password ? 'input-error' : ''}`}
-                        disabled={loading}
-                    />
+                    <div className='pwd-container'>
+                        <input
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder="Пароль"
+                            value={formData.password}
+                            onChange={(e) => handleChange('password', e.target.value)}
+                            className={`pwd-input ${submitted && !formData.password ? 'input-error' : ''}`}
+                            disabled={loading}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className='toggle-eye-btn'
+                        >
+                            {showPassword ? <img src={eye_closed} alt='Eye-toggle'></img> :
+                                <img src={eye} alt='Eye-toggle'></img>}
+                        </button>
+                    </div>
                     <button
                         type="submit"
                         className="login-button"
@@ -92,7 +105,8 @@ function LoginForm() {
                 </form>
             </div>
         </div>
-    );
+    )
+        ;
 }
 
 export default LoginForm;
