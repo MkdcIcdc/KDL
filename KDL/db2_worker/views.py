@@ -1,7 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from datetime import datetime
 
 from .models import SearchPatient
 from .serializer import SearchPatientSerializer
@@ -23,13 +22,12 @@ class TestPatientViewSet(viewsets.ModelViewSet):
             p_sname = data.get('s_name')
             p_name = data.get('name')
             p_surname = data.get('surname')
-            p_birth_str = data.get('date_birth')
+            p_birth = data.get('date_birth')
 
             # Преобразуем дату
-            p_birth = datetime.strptime(p_birth_str, '%d.%m.%Y').date()
             print(f"Ищу пациента: s_name={p_sname}, name={p_name}, surname={p_surname}, date_birth={p_birth}")
             # Получаем все подходящие записи
-            patients = Patient.objects.filter(
+            patients = SearchPatient.objects.filter(
                 s_name=p_sname,
                 name=p_name,
                 surname=p_surname,
@@ -43,7 +41,7 @@ class TestPatientViewSet(viewsets.ModelViewSet):
                 })
 
             # Сериализуем все найденные объекты
-            serializer = PatientSerializer(patients, many=True)
+            serializer = SearchPatientSerializer(patients, many=True)
 
             return Response({
                 'status': 'success',
@@ -51,11 +49,6 @@ class TestPatientViewSet(viewsets.ModelViewSet):
                 'message': f'Найдено {patients.count()} пациентов'
             })
 
-        except ValueError:
-            return Response({
-                'status': 'error',
-                'message': 'Некорректный формат даты. Используйте DD.MM.YYYY'
-            })
         except Exception as e:
             return Response({
                 'status': 'error',
