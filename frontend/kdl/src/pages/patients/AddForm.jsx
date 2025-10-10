@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 export default function AddForm({isOpen, onClose, children}) {
     const [error, setError] = useState('');
+    const [patients, setPatients] = useState([]);
     const [formData, setFormData] = useState({
         s_name: '',
         name: '',
@@ -24,6 +25,7 @@ export default function AddForm({isOpen, onClose, children}) {
             setError('Заполните все поля');
             return;
         }
+        setPatients([]);
         try {
             const response = await fetch('/api/db2_worker/get_patient/', {
                 method: 'POST',
@@ -45,7 +47,11 @@ export default function AddForm({isOpen, onClose, children}) {
         }
     };
 
-    if (!isOpen) return null;
+    if (!isOpen){
+        setPatients([]);
+        setError('');
+        return null;
+    }
 
     return (
         <div className='add-window-background' onClick={onClose}>
@@ -102,6 +108,28 @@ export default function AddForm({isOpen, onClose, children}) {
                 <button className='modal-close' onClick={onClose}>
                     Закрыть
                 </button>
+
+                {patients.length > 0 && (
+                    <div className="patients-table-container">
+                        <h3>Найденные пациенты:</h3>
+                        <table className="patients-table">
+                            <thead>
+                                <tr>
+                                    <th>ФИО пациента</th>
+                                    <th>Дата рождения</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {patients.map((patient, index) => (
+                                    <tr key={index}>
+                                        <td>{patient.s_name} {patient.name} {patient.surname}</td>
+                                        <td>{patient.date_birth}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
     );
