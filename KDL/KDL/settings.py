@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'employer',
     'patient',
     'conclusion',
-    'db2_worker',
 ]
 
 MIDDLEWARE = [
