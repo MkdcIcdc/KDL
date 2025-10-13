@@ -11,7 +11,6 @@ export default function AddForm({isOpen, onClose, children}) {
         date_birth: ''
     });
 
-    // Обработчик изменения полей ввода
     const handleInputChange = (e) => {
         const {id, value} = e.target;
         setFormData(prev => ({
@@ -26,6 +25,7 @@ export default function AddForm({isOpen, onClose, children}) {
             return;
         }
         setPatients([]);
+        setError('');
         try {
             const response = await fetch('/api/db2_worker/get_patient/', {
                 method: 'POST',
@@ -41,75 +41,101 @@ export default function AddForm({isOpen, onClose, children}) {
             });
             const data = await response.json();
 
-            console.log(data);
+            if (data && data.patients && Array.isArray(data.patients)) {
+                setPatients(data.patients);
+            } else {
+                setError('Пациенты не найдены');
+            }
+
         } catch (err) {
             setError('Ошибка соединения с сервером');
         }
     };
 
-    if (!isOpen){
+    // Функция для возврата к поиску
+    const backToSearch = () => {
         setPatients([]);
-        setError('');
-        return null;
-    }
+        setFormData({
+            s_name: '',
+            name: '',
+            surname: '',
+            date_birth: ''
+        });
+    };
+
+    useEffect(() => {
+        if (!isOpen) {
+            setPatients([]);
+            setError('');
+            setFormData({
+                s_name: '',
+                name: '',
+                surname: '',
+                date_birth: ''
+            });
+        }
+    }, [isOpen]);
+
+    if (!isOpen) return null;
 
     return (
         <div className='add-window-background' onClick={onClose}>
             <div className='add-window' onClick={(e) => e.stopPropagation()}>
                 {error && <div className="error-message">{error}</div>}
 
-                <div className='input-container'>
-                    <input
-                        className='search-item'
-                        type='text'
-                        id='s_name'
-                        placeholder=" "
-                        value={formData.s_name}
-                        onChange={handleInputChange}
-                    />
-                    <label className="search-item-label">Фамилия</label>
-                </div>
-                <div className='input-container'>
-                    <input
-                        className='search-item'
-                        type='text'
-                        id='name'
-                        placeholder=" "
-                        value={formData.name}
-                        onChange={handleInputChange}
-                    />
-                    <label className="search-item-label">Имя</label>
-                </div>
-                <div className='input-container'>
-                    <input
-                        className='search-item'
-                        type='text'
-                        id='surname'
-                        placeholder=" "
-                        value={formData.surname}
-                        onChange={handleInputChange}
-                    />
-                    <label className="search-item-label">Отчество</label>
-                </div>
-                <div className='input-container'>
-                    <input
-                        className='search-item'
-                        type='date'
-                        id='date_birth'
-                        placeholder=" "
-                        value={formData.date_birth}
-                        onChange={handleInputChange}
-                    />
-                    <label className="search-item-label">Дата рождения</label>
-                </div>
-                <button className='search-ptn-btn' onClick={searchPatient}>
-                    Найти пациента
-                </button>
-                <button className='modal-close' onClick={onClose}>
-                    Закрыть
-                </button>
-
-                {patients.length > 0 && (
+                {patients.length === 0 ? (
+                    // Показываем поля для поиска
+                    <>
+                        <div className='input-container'>
+                            <input
+                                className='search-item'
+                                type='text'
+                                id='s_name'
+                                placeholder=" "
+                                value={formData.s_name}
+                                onChange={handleInputChange}
+                            />
+                            <label className="search-item-label">Фамилия</label>
+                        </div>
+                        <div className='input-container'>
+                            <input
+                                className='search-item'
+                                type='text'
+                                id='name'
+                                placeholder=" "
+                                value={formData.name}
+                                onChange={handleInputChange}
+                            />
+                            <label className="search-item-label">Имя</label>
+                        </div>
+                        <div className='input-container'>
+                            <input
+                                className='search-item'
+                                type='text'
+                                id='surname'
+                                placeholder=" "
+                                value={formData.surname}
+                                onChange={handleInputChange}
+                            />
+                            <label className="search-item-label">Отчество</label>
+                        </div>
+                        <div className='input-container'>
+                            <input
+                                className='search-item'
+                                type='date'
+                                id='date_birth'
+                                placeholder=" "
+                                value={formData.date_birth}
+                                onChange={handleInputChange}
+                            />
+                            <label className="search-item-label">Дата рождения</label>
+                        </div>
+                        <button className='search-ptn-btn' onClick={searchPatient}>
+                            Найти пациента
+                        </button>
+                    </>
+                ) : (
+                    // Показываем таблицу с результатами
                     <div className="patients-table-container">
                         <h3>Найденные пациенты:</h3>
                         <table className="patients-table">
@@ -128,8 +154,15 @@ export default function AddForm({isOpen, onClose, children}) {
                                 ))}
                             </tbody>
                         </table>
+                        <button className='back-to-search-btn' onClick={backToSearch}>
+                            Новый поиск
+                        </button>
                     </div>
                 )}
+
+                <button className='modal-close' onClick={onClose}>
+                    Закрыть
+                </button>
             </div>
         </div>
     );
