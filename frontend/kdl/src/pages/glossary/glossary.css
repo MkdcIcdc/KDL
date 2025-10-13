@@ -367,7 +367,7 @@ p {
     width: auto;
 }
 
-.table-data-head{
+.table-data-head {
     height: 62px;
     background: #95B4E7;
     font-size: 16px;
@@ -376,7 +376,7 @@ p {
     padding: 0 12px;
 }
 
-.table-data-body{
+.table-data-body {
     height: 48px;
     font-size: 16px;
     padding: 0 12px;
@@ -388,14 +388,15 @@ p {
     white-space: nowrap;
 }
 
-.table-selector{
+.table-selector {
     margin: 74px 0 0 79px;
 }
 
-.p-column-toggle-btn{
+.p-column-toggle-btn {
     font-size: 16px;
     color: #7891B3;
 }
+
 .column-toggle-btn {
     margin-top: 9px;
     text-align: left;
@@ -475,11 +476,11 @@ p {
     background-color: #D5DDEB;
 }
 
-.column-menu::-webkit-scrollbar-thumb{
+.column-menu::-webkit-scrollbar-thumb {
     background-color: #6A8BB9;
 }
 
-.column-menu::-webkit-scrollbar-button:vertical:decrement{
+.column-menu::-webkit-scrollbar-button:vertical:decrement {
     width: 16px;
     height: 16px;
     background-size: 16px 16px;
@@ -497,7 +498,7 @@ p {
     background-position: center;
 }
 
-.filter-btn{
+.filter-btn {
     margin: 5px 0 0 48px;
     width: 132px;
     height: 48px;
@@ -512,13 +513,13 @@ p {
     font-weight: bold;
 }
 
-.filter-icon{
+.filter-icon {
     margin-left: 25px;
     padding: 0;
     vertical-align: middle;
 }
 
-.filter{
+.filter {
     position: absolute;
     width: 402px;
     height: 555px;
@@ -531,26 +532,26 @@ p {
     flex-direction: column;
 }
 
-.dropdown{
+.dropdown {
     display: flex;
     flex-direction: column;
     margin: 28px 30px 0 31px;
     gap: 4px;
 }
 
-.dd-label{
+.dd-label {
     font-size: 16px;
     color: #7891B3;
 }
 
-.dd-select{
+.dd-select {
     height: 48px;
     padding: 0;
     width: 100%;
     min-width: 150px;
 }
 
-.state-add-btn{
+.state-add-btn {
     width: 201px;
     height: 48px;
     border: none;
@@ -562,7 +563,7 @@ p {
     cursor: pointer;
 }
 
-.state-pencil-icon{
+.state-pencil-icon {
     width: 16px;
     height: 16px;
     margin-left: 16px;
@@ -592,13 +593,13 @@ p {
     border-collapse: collapse;
 }
 
-.pagination-container-state{
+.pagination-container-state {
     margin: 40px 0 0 0;
 }
 
 /* для страницы пациента */
 
-.patient-header{
+.patient-header {
     margin-left: 91px;
     width: 600px;
     height: 115px;
@@ -609,7 +610,7 @@ p {
 }
 
 .patient-search-btn,
-.patient-add-btn{
+.patient-add-btn {
     background-color: #7E9AC2;
     width: 250px;
     height: 48px;
@@ -618,15 +619,15 @@ p {
 }
 
 .patient-search-btn:hover,
-.patient-add-btn:hover{
+.patient-add-btn:hover {
     background-color: #6A8BB9;
 }
 
-.patient-search{
+.patient-search {
     margin: 0 0 20px 91px;
 }
 
-.patient-search-input{
+.patient-search-input {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -665,7 +666,7 @@ p {
     width: 570px;
 }
 
-.search-item{
+.search-item {
     margin-top: 0;
     padding: 16px 10px 6px 10px;
     width: 100%;
@@ -687,7 +688,7 @@ p {
 
 /* Стили для поднятого label */
 .search-item:focus ~ .search-item-label,
-.search-item:not(:placeholder-shown) ~ .search-item-label{
+.search-item:not(:placeholder-shown) ~ .search-item-label {
     top: -10px;
     left: 10px;
     font-size: 14px;
@@ -702,24 +703,41 @@ p {
     border: 2px solid #6A8BB9;
 }
 
-.patient-list{
+/* Таблица найденных пациентов */
+.table-row {
+    cursor: pointer;
+    background-color: #dddddd;
+    transition: background-color 0.2s;
+}
+
+.table-row:hover {
+    color: #dddddd;
+    background-color: #6A8BB9;
+}
+
+.table-row.selected {
+    color: #dddddd;
+    background-color: #0047BA;
+}
+
+.patient-list {
     border-collapse: collapse;
     margin-left: 91px;
 }
 
 .patient-list th,
-.patient-list td{
+.patient-list td {
     border: 1px solid #ddd;
 }
 
-.pl-body-data{
+.pl-body-data {
     vertical-align: center;
     text-align: center;
     padding: 12px;
     font-size: 16px;
 }
 
-.patient-card{
+.patient-card {
     width: 85%;
     height: 115px;
     margin: 0 0 0 91px;
@@ -727,12 +745,12 @@ p {
     background-color: white;
 }
 
-.pdd-head{
-    margin: 15px 0 0 0/* 48px */;
+.pdd-head {
+    margin: 15px 0 0 0 /* 48px */;
     border-collapse: collapse;
 }
 
-.pdd-head-arrow{
+.pdd-head-arrow {
     width: 47px;
     padding: 0;
     border: 1px solid white;
@@ -740,25 +758,25 @@ p {
     vertical-align: middle;
 }
 
-.pdd-head-item{
+.pdd-head-item {
     font-size: 24px;
     color: #0C2348;
     border: none;
     padding-right: 49px;
 }
 
-.patient-arrow{
+.patient-arrow {
     transform: rotate(270deg);
     margin-top: 7px;
 }
 
-.pdd-body{
+.pdd-body {
     border-collapse: collapse;
     margin: 18px 0 0 48px;
 }
 
 .pdd-body th,
-.pdd-body td{
+.pdd-body td {
     border-collapse: collapse;
     padding: 0 30px 0 0;
     border: none;
@@ -770,11 +788,11 @@ p {
     font-weight: normal;
 }
 
-.pdd-body td{
+.pdd-body td {
     color: #0C2348;
 }
 
-.patient-analiz{
+.patient-analiz {
     width: 85%;
     min-height: 115px;
     background-color: white;
@@ -782,13 +800,13 @@ p {
     border: 1px solid white;
 }
 
-.lab-data-head{
+.lab-data-head {
     color: #0C2348;
     font-size: 24px;
     padding: 24px 0 0 48px;
 }
 
-.ld-main{
+.ld-main {
     list-style: none;
     cursor: pointer;
     display: flex;
@@ -797,14 +815,14 @@ p {
 }
 
 .ld-main::-webkit-details-marker {
-  display: none;
+    display: none;
 }
 
 .lab-data-head[open] summary img.arrow {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
-.ld-body{
+.ld-body {
     font-size: 20px;
     padding-top: 20px;
     list-style: none;
@@ -816,22 +834,22 @@ p {
 }
 
 .ld-body::-webkit-details-marker {
-  display: none;
+    display: none;
 }
 
 .dates[open] summary img.dates-arrow {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
-.detail-lab-data{
+.detail-lab-data {
     margin: 0 0 0 107px;
 }
 
-.cld-detail{
-    margin-left:300px;
+.cld-detail {
+    margin-left: 300px;
 }
 
-.cld-body{
+.cld-body {
     font-size: 20px;
     padding-top: 20px;
     list-style: none;
@@ -842,20 +860,20 @@ p {
 }
 
 .cld-body::-webkit-details-marker {
-  display: none;
+    display: none;
 }
 
 .cld-head[open] summary img.cld-arrow {
-  transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
-.labdata-pa{
+.labdata-pa {
     border-collapse: collapse;
     border: none;
 }
 
 .labdata-pa th,
-.labdata-pa td{
+.labdata-pa td {
     font-size: 18px;
     border: none;
     border-bottom: 1px solid #B7B7B7;
@@ -863,11 +881,11 @@ p {
     padding-right: 15px;
 }
 
-.labdata-pa th{
+.labdata-pa th {
     color: #0C2348;
 }
 
-.labdata-pa td{
+.labdata-pa td {
     font-size: 16px;
     color: #596E8D;
 }

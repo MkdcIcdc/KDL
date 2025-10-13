@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 export default function AddForm({isOpen, onClose, children}) {
     const [error, setError] = useState('');
     const [patients, setPatients] = useState([]);
+    const [selectedRow, setSelectedRow] = useState(null);
     const [formData, setFormData] = useState({
         s_name: '',
         name: '',
@@ -61,6 +62,14 @@ export default function AddForm({isOpen, onClose, children}) {
             surname: '',
             date_birth: ''
         });
+    };
+
+    const handleRowClick = (rowId) => {
+        setSelectedRow(rowId);
+    };
+
+    const getRowClassName = (rowId) => {
+        return `table-row ${selectedRow === rowId ? 'selected' : ''}`;
     };
 
     useEffect(() => {
@@ -138,7 +147,7 @@ export default function AddForm({isOpen, onClose, children}) {
                     // Показываем таблицу с результатами
                     <div className="patients-table-container">
                         <h3>Найденные пациенты:</h3>
-                        <table className="patients-table">
+                        <table className="searched-patients-table">
                             <thead>
                                 <tr>
                                     <th>ФИО пациента</th>
@@ -147,7 +156,10 @@ export default function AddForm({isOpen, onClose, children}) {
                             </thead>
                             <tbody>
                                 {patients.map((patient, index) => (
-                                    <tr key={index}>
+                                    <tr key={index}
+                                        onClick={() => handleRowClick(index)}
+                                        className={getRowClassName(index)}
+                                    >
                                         <td>{patient.s_name} {patient.name} {patient.surname}</td>
                                         <td>{patient.date_birth}</td>
                                     </tr>
