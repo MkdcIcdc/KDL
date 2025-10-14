@@ -82,6 +82,7 @@ export default function AddForm({isOpen, onClose, children}) {
                 surname: '',
                 date_birth: ''
             });
+            setSelectedRow('');
         }
     }, [isOpen]);
 
