@@ -153,6 +153,7 @@ export default function AddForm({isOpen, onClose, children}) {
                                 <tr>
                                     <th>ФИО пациента</th>
                                     <th>Дата рождения</th>
+                                    <th>Серия и номер паспорта</th>
                                 </tr>
                             </thead>
                             <tbody>
