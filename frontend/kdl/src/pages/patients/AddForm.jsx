@@ -163,6 +163,7 @@ export default function AddForm({isOpen, onClose, children}) {
                                     >
                                         <td>{patient.s_name} {patient.name} {patient.surname}</td>
                                         <td>{patient.date_birth}</td>
+                                        <td>{patient.full_passport_data}</td>
                                     </tr>
                                 ))}
                             </tbody>
