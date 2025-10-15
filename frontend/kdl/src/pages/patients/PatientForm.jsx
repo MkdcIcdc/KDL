@@ -8,9 +8,7 @@ function PatientForm() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isSearchVisible, setIsSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState(''); // состояние для поискового запроса
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,13 +40,6 @@ function PatientForm() {
     }, []);
 
     if (loading) return <div className="loading">Загрузка списка пациентов...</div>;
-    const toggleSearch = () => {
-        setIsSearchVisible(!isSearchVisible);
-        // Если скрываем поле поиска, очищаем поисковый запрос
-        if (isSearchVisible) {
-            setIsSearchVisible(!isSearchVisible);
-        }
-    };
 
     const filteredData = data ? data.filter(patient => {
         if (!searchTerm.trim()) return true;
@@ -60,9 +51,14 @@ function PatientForm() {
     return (
         <main>
             <div className="patient-header">
-                <button className='patient-search-btn' onClick={toggleSearch}>
-                    {isSearchVisible ? 'Скрыть поиск' : 'Найти пациента'}
-                </button>
+                <input
+                    className='patient-search-input'
+                    type="text"
+                    placeholder=" Введите ФИО для поиска..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    //autoFocus // автоматический фокус на поле при открытии
+                />
                 <button className='patient-add-btn' onClick={() => setIsModalOpen(true)}>
                     Добавить пациента
                 </button>
@@ -70,18 +66,7 @@ function PatientForm() {
 
             <AddForm isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
             </AddForm>
-            {isSearchVisible && (
-                <div className='patient-search'>
-                    <input
-                        className='patient-search-input'
-                        type="text"
-                        placeholder="Введите ФИО для поиска..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        autoFocus // автоматический фокус на поле при открытии
-                    />
-                </div>
-            )}
+
 
             {/* Сообщение об ошибке, если backend недоступен */}
             {error && (
@@ -121,7 +106,7 @@ function PatientForm() {
                     <tr>
                         <td colSpan="5" className="pl-body-data" style={{textAlign: "center"}}>
                             {error ? "Backend недоступен" :
-                             searchTerm ? "Пациенты не найдены" : "Нет данных о пациентах"}
+                                searchTerm ? "Пациенты не найдены" : "Нет данных о пациентах"}
                         </td>
                     </tr>
                 )}

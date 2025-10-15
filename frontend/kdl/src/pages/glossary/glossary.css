@@ -598,40 +598,35 @@ p {
 }
 
 /* для страницы пациента */
-
 .patient-header {
     margin-left: 91px;
-    width: 600px;
+    width: 764px;
     height: 115px;
-    background-color: #99B5E3;
     display: flex;
-    justify-content: space-around;
     align-items: center;
 }
 
-.patient-search-btn,
 .patient-add-btn {
-    background-color: #7E9AC2;
-    width: 250px;
-    height: 48px;
+    background-color: #0047BA;
+    margin: 0 0 0 36px;
+    padding: 0;
+    width: 184px;
+    height: 54px;
     border: none;
     font-size: 16px;
+    color: #ffffff;
 }
 
-.patient-search-btn:hover,
 .patient-add-btn:hover {
-    background-color: #6A8BB9;
-}
-
-.patient-search {
-    margin: 0 0 20px 91px;
+    cursor: pointer;
 }
 
 .patient-search-input {
-    padding: 8px 12px;
+    padding: 0 0 0 15px;
+    margin: 0;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 300px;
+    width: 544px;
+    height: 54px;
     font-size: 16px;
 }
 
