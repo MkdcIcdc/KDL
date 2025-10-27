@@ -6,8 +6,8 @@ const LabResultsTable = ({ research }) => {
         return (
             <details className='cld-head'>
                 <summary className='cld-body'>
-                    {research?.research_name || "Исследование"}
                     <img className='cld-arrow' src={arrow} alt=''/>
+                    <button>Результат исследования</button>
                 </summary>
                 <div className='cld-detail'>
                     <p>Нет данных для отображения</p>

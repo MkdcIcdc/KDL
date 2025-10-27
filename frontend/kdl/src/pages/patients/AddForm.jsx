@@ -140,9 +140,15 @@ export default function AddForm({isOpen, onClose, children}) {
                             />
                             <label className="search-item-label">Дата рождения</label>
                         </div>
-                        <button className='search-ptn-btn' onClick={searchPatient}>
-                            Найти пациента
-                        </button>
+                        <div className='btns-container'>
+                            <button className='search-ptn-btn' onClick={searchPatient}>
+                                Найти пациента
+                            </button>
+                            <button className='modal-close' onClick={onClose}>
+                                Закрыть
+                            </button>
+                        </div>
+
                     </>
                 ) : (
                     // Показываем таблицу с результатами
@@ -150,34 +156,38 @@ export default function AddForm({isOpen, onClose, children}) {
                         <h3>Найденные пациенты:</h3>
                         <table className="searched-patients-table">
                             <thead>
-                                <tr>
-                                    <th>ФИО пациента</th>
-                                    <th>Дата рождения</th>
-                                    <th>Серия и номер паспорта</th>
-                                </tr>
+                            <tr>
+                                <th>ФИО пациента</th>
+                                <th>Дата рождения</th>
+                                <th>Серия и номер паспорта</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                {patients.map((patient, index) => (
-                                    <tr key={index}
-                                        onClick={() => handleRowClick(index)}
-                                        className={getRowClassName(index)}
-                                    >
-                                        <td>{patient.s_name} {patient.name} {patient.surname}</td>
-                                        <td>{patient.date_birth}</td>
-                                        <td>{patient.full_passport_data}</td>
-                                    </tr>
-                                ))}
+                            {patients.map((patient, index) => (
+                                <tr key={index}
+                                    onClick={() => handleRowClick(index)}
+                                    className={getRowClassName(index)}
+                                >
+                                    <td>{patient.s_name} {patient.name} {patient.surname}</td>
+                                    <td>{patient.date_birth}</td>
+                                    <td>{patient.full_passport_data}</td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
-                        <button className='back-to-search-btn' onClick={backToSearch}>
-                            Новый поиск
-                        </button>
+                        <div className='btns-container'>
+                            <button className='back-to-search-btn' onClick={backToSearch}>
+                                Новый поиск
+                            </button>
+                            <button className='add-ptn-btn'>
+                                Добавить пациента
+                            </button>
+                            <button className='modal-close' onClick={onClose}>
+                                Закрыть
+                            </button>
+                        </div>
                     </div>
                 )}
-
-                <button className='modal-close' onClick={onClose}>
-                    Закрыть
-                </button>
             </div>
         </div>
     );
