@@ -94,8 +94,18 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='5432'),
+    },
+    'source_db':{
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('SPG_DB'),
+        'USER': config('SPG_USER'),
+        'PASSWORD': config('SPG_PASSWORD'),
+        'HOST': config('SPG_HOST'),
+        'PORT': config('SPG_PORT'),
     }
 }
+
+DATABASE_ROUTERS = ['db2_worker.routers.DatabaseRouter']
 
 
 # Password validation

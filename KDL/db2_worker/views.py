@@ -28,10 +28,10 @@ class TestPatientViewSet(viewsets.ModelViewSet):
             print(f"Ищу пациента: s_name={p_sname}, name={p_name}, surname={p_surname}, date_birth={p_birth}")
             # Получаем все подходящие записи
             patients = SearchPatient.objects.filter(
-                s_name=p_sname,
-                name=p_name,
-                surname=p_surname,
-                date_birth=p_birth
+                LASTNAME=p_sname,
+                FIRSTNAME=p_name,
+                MIDDLENAME=p_surname,
+                BDAY=p_birth
             )
 
             if not patients.exists():
