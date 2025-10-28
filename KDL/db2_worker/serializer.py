@@ -3,6 +3,7 @@ from .models import SearchPatient
 
 
 class SearchPatientSerializer(serializers.ModelSerializer):
+    BDAY = serializers.DateField(format='%d.%m.%Y')
     full_passport_data = serializers.SerializerMethodField()
 
     class Meta:
