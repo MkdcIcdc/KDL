@@ -643,11 +643,11 @@ p {
     z-index: 1000;
 }
 
+/* Окно поиска пациента */
 .add-window {
     background-color: #F5F5F5;
-    padding: 30px;
-    width: 600px;
-    height: 38vh;
+    width: 638px;
+    height: 448px;
     overflow-y: auto;
     position: relative;
     display: flex;
@@ -655,28 +655,35 @@ p {
     align-items: center;
 }
 
+.main-add-container{
+    margin-top: 60px;
+}
+
 .input-container {
     position: relative;
-    margin: 15px 0;
-    width: 570px;
+    margin: 0 0 16px 0;
+    width: 464px;
+    height: 48px;
 }
 
 .search-item {
     margin-top: 0;
-    padding: 16px 10px 6px 10px;
+    padding: 13px 10px 6px 18px;
     width: 100%;
     height: 48px;
-    font-size: 20px;
+    font-family: Arial, sans-serif;
+    color: #0C2348;
+    font-size: 16px;
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
 
 .search-item-label {
     position: absolute;
-    top: 8px;
-    left: 10px;
-    font-size: 20px;
-    color: #999;
+    top: 13px;
+    left: 18px;
+    font-size: 16px;
+    color: #97ACCA;
     pointer-events: none;
     transition: 0.2s ease all;
 }
@@ -684,14 +691,20 @@ p {
 .btns-container{
     display: flex;
     flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 
 .search-ptn-btn{
-    width: 184px;
-    height: 48px;
-    background-color: #43c304;
+    width: 196px;
+    height: 38px;
+    margin-top: 16px;
+    background-color: #6A8BB9;
+    color: #ffffff;
     border: none;
+    font-family: Arial, sans-serif;
     font-size: 16px;
+
 }
 
 /* Стили для поднятого label */
@@ -721,6 +734,8 @@ p {
     color: #0C2348;
     border: 1px solid #000000;
     padding: 5px 10px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
 }
 
 .table-row {
@@ -738,6 +753,24 @@ p {
 .table-row.selected {
     color: #ffffff;
     background-color: #0047BA;
+}
+
+.btns-container{
+    margin-top: 54px;
+}
+
+.add-ptn-btn{
+    background-color: #0047BA;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.back-to-search-btn{
+    background-color: #ffffff;
+    border: 0.5px solid #0047BA;
+    font-size: 16px;
+    color: #0047BA;
+    margin-left: 16px;
 }
 
 .patient-list {

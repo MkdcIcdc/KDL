@@ -94,7 +94,7 @@ export default function AddForm({isOpen, onClose, children}) {
 
                 {patients.length === 0 ? (
                     // Показываем поля для поиска
-                    <>
+                    <div className='main-add-container'>
                         <div className='input-container'>
                             <input
                                 className='search-item'
@@ -143,12 +143,9 @@ export default function AddForm({isOpen, onClose, children}) {
                             <button className='search-ptn-btn' onClick={searchPatient}>
                                 Найти пациента
                             </button>
-                            <button className='modal-close' onClick={onClose}>
-                                Закрыть
-                            </button>
                         </div>
 
-                    </>
+                    </div>
                 ) : (
                     // Показываем таблицу с результатами
                     <div className="patients-table-container">
@@ -175,11 +172,11 @@ export default function AddForm({isOpen, onClose, children}) {
                             </tbody>
                         </table>
                         <div className='btns-container'>
-                            <button className='back-to-search-btn' onClick={backToSearch}>
-                                Новый поиск
-                            </button>
                             <button className='add-ptn-btn'>
                                 Добавить пациента
+                            </button>
+                            <button className='back-to-search-btn' onClick={backToSearch}>
+                                Новый поиск
                             </button>
                             <button className='modal-close' onClick={onClose}>
                                 Закрыть
