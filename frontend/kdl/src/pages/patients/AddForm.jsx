@@ -41,7 +41,6 @@ export default function AddForm({isOpen, onClose, children}) {
                 }),
             });
             const data = await response.json();
-
             if (data && data.patients && Array.isArray(data.patients)) {
                 setPatients(data.patients);
             } else {
@@ -168,8 +167,8 @@ export default function AddForm({isOpen, onClose, children}) {
                                     onClick={() => handleRowClick(index)}
                                     className={getRowClassName(index)}
                                 >
-                                    <td>{patient.s_name} {patient.name} {patient.surname}</td>
-                                    <td>{patient.date_birth}</td>
+                                    <td>{patient.LASTNAME} {patient.FIRSTNAME} {patient.MIDDLENAME}</td>
+                                    <td>{patient.BDAY}</td>
                                     <td>{patient.full_passport_data}</td>
                                 </tr>
                             ))}
