@@ -12,3 +12,4 @@ class SearchPatientSerializer(serializers.ModelSerializer):
 
     def get_full_passport_data(self, obj):
         return f'{obj.DOCSERIA} {obj.DOCNUMBER}'
+

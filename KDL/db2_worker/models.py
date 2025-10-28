@@ -14,7 +14,7 @@ class SearchPatient(models.Model):
     med_polis = models.CharField(max_length=50, null=True)
     medstat_id = models.CharField(max_length=50, null=True)
     '''
-    PATIENTNUMBER = models.TextField()
+    PATIENTNUMBER = models.TextField(primary_key=True)
     BDAY = models.TextField()
     CONTRACT = models.TextField()
     PHONE = models.TextField()
