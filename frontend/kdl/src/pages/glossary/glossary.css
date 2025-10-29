@@ -644,10 +644,21 @@ p {
 }
 
 /* Окно поиска пациента */
-.add-window {
+.add-window-main {
     background-color: #F5F5F5;
     width: 638px;
     height: 448px;
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.add-window-searched {
+    background-color: #F5F5F5;
+    width: 800px;
+    height: 375px;
     overflow-y: auto;
     position: relative;
     display: flex;
@@ -727,15 +738,32 @@ p {
 /* Таблица найденных пациентов */
 .searched-patients-table {
     border-collapse: collapse;
+    width: 627px;
 }
 
 .searched-patients-table th {
     background: #95B4E7;
     color: #0C2348;
-    border: 1px solid #000000;
-    padding: 5px 10px;
+    /*padding: 5px 10px;*/
     font-family: Arial, sans-serif;
     font-size: 16px;
+    font-weight: bold;
+    height: 62px;
+}
+
+/* Вертикальные разделители между заголовками */
+.searched-patients-table th:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 30%;    /* Отступ сверху - разделитель не доходит до верха */
+    bottom: 30%; /* Отступ снизу - разделитель не доходит до низа */
+    right: 0;
+    width: 1px;
+    background: linear-gradient(to bottom,
+        transparent 0%,
+        #ddd 10%,
+        #ddd 90%,
+        transparent 100%);
 }
 
 .table-row {
@@ -743,6 +771,7 @@ p {
     background-color: #ffffff;
     transition: background-color 0.2s;
     padding-left: 5px;
+    height: 48px;
 }
 
 .table-row:hover {
@@ -763,6 +792,9 @@ p {
     background-color: #0047BA;
     color: #ffffff;
     font-size: 16px;
+    border: none;
+    width: 196px;
+    height: 38px;
 }
 
 .back-to-search-btn{
@@ -771,6 +803,8 @@ p {
     font-size: 16px;
     color: #0047BA;
     margin-left: 16px;
+    width: 146px;
+    height: 38px;
 }
 
 .patient-list {

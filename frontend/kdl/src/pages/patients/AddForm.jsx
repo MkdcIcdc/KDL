@@ -89,9 +89,9 @@ export default function AddForm({isOpen, onClose, children}) {
 
     return (
         <div className='add-window-background' onClick={onClose}>
-            <div className='add-window' onClick={(e) => e.stopPropagation()}>
+            <div className={patients.length > 0 ? 'add-window-searched' : 'add-window-main'}
+                 onClick={(e) => e.stopPropagation()}>
                 {error && <div className="error-message">{error}</div>}
-
                 {patients.length === 0 ? (
                     // Показываем поля для поиска
                     <div className='main-add-container'>
@@ -178,9 +178,9 @@ export default function AddForm({isOpen, onClose, children}) {
                             <button className='back-to-search-btn' onClick={backToSearch}>
                                 Новый поиск
                             </button>
-                            <button className='modal-close' onClick={onClose}>
+                            {/*<button className='modal-close' onClick={onClose}>
                                 Закрыть
-                            </button>
+                            </button>*/}
                         </div>
                     </div>
                 )}
