@@ -28,29 +28,56 @@ def patient_from_db(id: int):
 
 def get_last_key_value_pair(d):
     def find_deepest(current_dict):
+        if not isinstance(current_dict, dict) or not current_dict:
+            return None, current_dict
+
         for key, value in current_dict.items():
             if isinstance(value, dict) and value:
-                return find_deepest(value)
-            else:
-                return (key, value)
+                deeper_key, deeper_value = find_deepest(value)
+                if deeper_key is not None:
+                    return deeper_key, deeper_value
+            return key, value
+        return None, None
 
     return find_deepest(d)
 
 def create_word_document(in_list: list):
     func_dict = {}
-    func_list = []
-    first_item = in_list[0]
-    for i in range(len(first_item)):
-        last_key, last_value = get_last_key_value_pair(first_item[i])
-        last_key = last_key.split(':', 1)
-        last_key = last_key[0]
 
-        for sub_item_text in last_value:
-            sub_item_parts = sub_item_text.split(':', 1)
-            sub_item_parts = sub_item_parts[0]
-            func_list.append(sub_item_parts)
-            func_dict[last_key] = func_list
-        func_list = []
+    data_dict = in_list[0]
+    p_data = in_list[1]
+
+    # Получаем заключение и рекомендации
+    recap = data_dict.get('recap', '')  # Заключение
+    recomend = data_dict.get('recomend', '')  # Рекомендации
+
+    # Если рекомендации в формате строки-списка, преобразуем в настоящий список
+    if isinstance(recomend, str) and recomend.startswith('[') and recomend.endswith(']'):
+        try:
+            recomend = ast.literal_eval(recomend)
+        except:
+            # Если не удалось преобразовать, оставляем как есть
+            pass
+
+    conclusions = data_dict.get('conclusion', [])
+
+    for conclusion in conclusions:
+        for category, content in conclusion.items():
+            # Если ключ уже существует, добавляем к существующему списку
+            if category not in func_dict:
+                func_dict[category] = []
+
+            # Ищем самый глубокий уровень вложенности
+            last_key, last_value = get_last_key_value_pair(content)
+            last_key = last_key.split(':', 1)[0]
+
+            # Обрабатываем значения
+            if isinstance(last_value, list):
+                for sub_item_text in last_value:
+                    sub_item_parts = sub_item_text.split(':', 1)[0]
+                    # Добавляем только если такого элемента еще нет в списке
+                    if sub_item_parts not in func_dict[category]:
+                        func_dict[category].append(sub_item_parts)
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -59,7 +86,12 @@ def create_word_document(in_list: list):
 
     template_path = os.path.join(current_dir, 'template.docx')
     tpl = DocxTemplate(template_path)
-    tpl.render({"p_data": in_list[1], "func_dict": func_dict})
+    tpl.render({
+        "p_data": p_data,
+        "func_dict": func_dict,
+        "recap": recap,
+        "recomend": recomend
+    })
     filename = f"{in_list[1]['fio']}_заключение.docx"
     file_path = os.path.join(docx_dir, filename)
     tpl.save(file_path)
