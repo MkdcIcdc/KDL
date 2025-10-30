@@ -630,6 +630,7 @@ p {
     font-size: 16px;
 }
 
+/* Окно поиска пациента */
 .add-window-background {
     position: fixed;
     top: 0;
@@ -643,7 +644,6 @@ p {
     z-index: 1000;
 }
 
-/* Окно поиска пациента */
 .add-window-main {
     background-color: #F5F5F5;
     width: 638px;
@@ -715,7 +715,6 @@ p {
     border: none;
     font-family: Arial, sans-serif;
     font-size: 16px;
-
 }
 
 /* Стили для поднятого label */
@@ -749,21 +748,6 @@ p {
     font-size: 16px;
     font-weight: bold;
     height: 62px;
-}
-
-/* Вертикальные разделители между заголовками */
-.searched-patients-table th:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    top: 30%;    /* Отступ сверху - разделитель не доходит до верха */
-    bottom: 30%; /* Отступ снизу - разделитель не доходит до низа */
-    right: 0;
-    width: 1px;
-    background: linear-gradient(to bottom,
-        transparent 0%,
-        #ddd 10%,
-        #ddd 90%,
-        transparent 100%);
 }
 
 .table-row {
@@ -975,4 +959,12 @@ p {
 .labdata-pa td {
     font-size: 16px;
     color: #596E8D;
+}
+
+.conclusion-btn{
+    width: 226px;
+    height: 36px;
+    background-color: #ffffff;
+    border: 1px solid #0047BA;
+    color: #0047BA;
 }
