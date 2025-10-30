@@ -110,7 +110,7 @@ function PatientDetailForm() {
             setGroupedResearchData(groupResearchByDate(researchData));
         }
     }, [researchData]);
-
+    {/*
     // ✅ Загружаем статусы при изменении researchData
     useEffect(() => {
         const loadAllConclusionStatuses = async () => {
@@ -128,11 +128,12 @@ function PatientDetailForm() {
             loadAllConclusionStatuses();
         }
     }, [researchData]);
+    */}
 
     if (loading) return <div className="loading">Загрузка данных пациента...</div>;
     if (error) return <div className="error">Ошибка: {error}</div>;
     if (!patientData) return <div>Данные пациента не найдены</div>;
-
+    {/*
     const checkConclusion = async (researchID) => {
         try {
             const response = await fetch(`/api/conclusion/check_conclusion/?research_id=${researchID}`, {
@@ -255,6 +256,7 @@ function PatientDetailForm() {
             </button>
         );
     };
+    */}
 
     return (
         <main className='main-p-df'>
@@ -313,7 +315,7 @@ function PatientDetailForm() {
                                     {researches.map((research, index) => (
                                         <div key={research.id || index} className='research-item'>
                                             <LabResultsTable research={research}/>
-                                            {renderConclusionButtons(research.id)}
+                                            {/*{renderConclusionButtons(research.id)}*/}
                                         </div>
                                     ))}
                                 </div>

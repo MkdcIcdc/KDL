@@ -149,13 +149,12 @@ export default function AddForm({isOpen, onClose, children}) {
                 ) : (
                     // Показываем таблицу с результатами
                     <div className="patients-table-container">
-                        <h3>Найденные пациенты:</h3>
                         <table className="searched-patients-table">
                             <thead>
                             <tr>
-                                <th>ФИО пациента</th>
-                                <th>Дата рождения</th>
-                                <th>Серия и номер паспорта</th>
+                                <th style={{width: "50%"}}>ФИО пациента</th>
+                                <th style={{width: "25%"}}>Дата рождения</th>
+                                <th style={{width: "25%"}}>Серия и номер паспорта</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -171,7 +170,7 @@ export default function AddForm({isOpen, onClose, children}) {
                             ))}
                             </tbody>
                         </table>
-                        <div className='btns-container'>
+                        <div className='btns-container-searched'>
                             <button className='add-ptn-btn'>
                                 Добавить пациента
                             </button>

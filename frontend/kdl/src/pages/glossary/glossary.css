@@ -704,6 +704,7 @@ p {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-top: 54px;
 }
 
 .search-ptn-btn{
@@ -734,6 +735,10 @@ p {
     border: 2px solid #6A8BB9;
 }
 
+
+.patients-table-container{
+    margin-top: 60px;
+}
 /* Таблица найденных пациентов */
 .searched-patients-table {
     border-collapse: collapse;
@@ -748,6 +753,12 @@ p {
     font-size: 16px;
     font-weight: bold;
     height: 62px;
+    border: 0.5px solid #95B4E7;
+}
+
+.searched-patients-table td{
+    border: 0.5px solid #65686D;
+    padding: 0 0 0 18px;
 }
 
 .table-row {
@@ -768,8 +779,11 @@ p {
     background-color: #0047BA;
 }
 
-.btns-container{
+.btns-container-searched{
     margin-top: 54px;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
 }
 
 .add-ptn-btn{
@@ -869,6 +883,7 @@ p {
     background-color: white;
     margin: 30px 0 0 91px;
     border: 1px solid white;
+    padding: 0 15px 15px 0;
 }
 
 .lab-data-head {
@@ -917,14 +932,17 @@ p {
 }
 
 .cld-detail {
-    margin-left: 300px;
+    /*margin-left: 300px;*/
+    display: flex;
+    justify-content: center; /* Горизонтальное центрирование */
+    align-items: center;     /* Вертикальное центрирование */
 }
 
 .cld-body {
     font-size: 20px;
     padding-top: 20px;
     list-style: none;
-    cursor: pointer;
+    pointer-events: none;
     display: flex;
     justify-content: space-between;
     align-items: start;
@@ -961,10 +979,26 @@ p {
     color: #596E8D;
 }
 
+.btn-view-result{
+    width: 202px;
+    height: 36px;
+    background-color: #ffffff ;
+    color: #0047BA;
+    cursor: pointer;
+    font-size: 16px;
+    border: 1px solid #0047BA;
+    pointer-events: auto;
+    margin-right: 26px;
+}
+
 .conclusion-btn{
     width: 226px;
     height: 36px;
     background-color: #ffffff;
-    border: 1px solid #0047BA;
+    border: none;
     color: #0047BA;
+    text-decoration: underline;
+    font-size: 16px;
+    cursor: pointer;
+    pointer-events: auto
 }
