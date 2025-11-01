@@ -3,20 +3,28 @@ class DatabaseRouter:
     Роутер для управления использованием разных БД
     """
 
+    SOURCE_DB_MODELS = {
+        'searchpatient',
+        'history',
+        'researches',
+        'resultresearch',
+        'sex'
+    }
+
     def db_for_read(self, model, **hints):
         """
-        Чтение для модели SearchPatient идет из source_db
-        Остальные модели используют default
+        Модели медстата идут из source_db
         """
-        if model._meta.model_name == 'searchpatient':
+        if model._meta.model_name.lower() in self.SOURCE_DB_MODELS:
             return 'source_db'
         return 'default'
 
     def db_for_write(self, model, **hints):
         """
-        Запись для всех моделей идет в default БД
-        SearchPatient только для чтения
+        Запись для моделей медстата запрещена (только чтение)
         """
+        if model._meta.model_name.lower() in self.SOURCE_DB_MODELS:
+            return 'source_db'  # или вернуть None для запрета записи
         return 'default'
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -29,4 +37,6 @@ class DatabaseRouter:
         """
         Миграции применяются только к default БД
         """
+        if app_label == 'db2_reader' and model_name.lower() in self.SOURCE_DB_MODELS:
+            return db == 'source_db'
         return db == 'default'
