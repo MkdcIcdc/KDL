@@ -5,6 +5,7 @@ export default function AddForm({isOpen, onClose, children}) {
     const [error, setError] = useState('');
     const [patients, setPatients] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [selectedPatientNumber, setSelectedPatientNumber] = useState(null);
     const [formData, setFormData] = useState({
         s_name: '',
         name: '',
@@ -26,6 +27,7 @@ export default function AddForm({isOpen, onClose, children}) {
             return;
         }
         setPatients([]);
+        setSelectedPatientNumber(null);
         setError('');
         try {
             const response = await fetch('/api/db2_worker/get_patient/', {
@@ -55,6 +57,7 @@ export default function AddForm({isOpen, onClose, children}) {
     // Функция для возврата к поиску
     const backToSearch = () => {
         setPatients([]);
+        setSelectedPatientNumber(null);
         setFormData({
             s_name: '',
             name: '',
@@ -63,17 +66,46 @@ export default function AddForm({isOpen, onClose, children}) {
         });
     };
 
-    const handleRowClick = (rowId) => {
+    const handleRowClick = (rowId, patient) => {
         setSelectedRow(rowId);
+        setSelectedPatientNumber(patient.PATIENTNUMBER);
     };
 
     const getRowClassName = (rowId) => {
         return `table-row ${selectedRow === rowId ? 'selected' : ''}`;
     };
 
+    const addPatient = async () => {
+        if (!selectedPatientNumber) {
+            setError('Выберите пациента из таблицы');
+            return;
+        }
+
+        try{
+            const response = await fetch('/api/db2_worker/add_patient/' ,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    PATIENTNUMBER: selectedPatientNumber
+                })
+            });
+            if (response.ok){
+                console.log('Пациент добавлен');
+            } else{
+                setError('Ошибка при добавлении пациента');
+            }
+
+        } catch (err){
+            setError('Ошибка соединения с сервером');
+        }
+    }
+
     useEffect(() => {
         if (!isOpen) {
             setPatients([]);
+            setSelectedPatientNumber(null);
             setError('');
             setFormData({
                 s_name: '',
@@ -160,7 +192,7 @@ export default function AddForm({isOpen, onClose, children}) {
                             <tbody>
                             {patients.map((patient, index) => (
                                 <tr key={index}
-                                    onClick={() => handleRowClick(index)}
+                                    onClick={() => handleRowClick(index, patient)}
                                     className={getRowClassName(index)}
                                 >
                                     <td>{patient.LASTNAME} {patient.FIRSTNAME} {patient.MIDDLENAME}</td>
@@ -171,7 +203,10 @@ export default function AddForm({isOpen, onClose, children}) {
                             </tbody>
                         </table>
                         <div className='btns-container-searched'>
-                            <button className='add-ptn-btn'>
+                            <button className='add-ptn-btn'
+                                    onClick={addPatient}
+                                    disabled={!selectedPatientNumber}
+                            >
                                 Добавить пациента
                             </button>
                             <button className='back-to-search-btn' onClick={backToSearch}>
