@@ -60,10 +60,14 @@ class TestPatientViewSet(viewsets.ModelViewSet):
             data = request.data
             p_num = data.get('PATIENTNUMBER')
             patient = SearchPatient.objects.filter(PATIENTNUMBER=p_num).first()
+
+            # Используем оптимизированный сериализатор
             research_serializer = PatientResearchSerializer(patient)
             researches_data = research_serializer.data.get('researches', [])
+
             p_serializer = AddPatientSerializer(patient)
             saved_patient = self.save_patient(p_serializer.data, researches_data)
+
             return Response({
                 'status': 'success',
                 'patient_id': saved_patient,

@@ -59,13 +59,13 @@ class AddPatientSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = History
-        fields = '__all__'
+        fields = ['KEY', 'PATIENTNUMBER']
 
 
 class ResearchesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Researches
-        fields = '__all__'
+        fields = ['KEY', 'KEY_HISTORY', 'ACTUALDATETIME', 'RESEARCH_CATEGORY']
 
 
 class PatientResearchSerializer(serializers.ModelSerializer):
@@ -76,28 +76,39 @@ class PatientResearchSerializer(serializers.ModelSerializer):
         fields = ['PATIENTNUMBER', 'researches']
 
     def get_researches(self, obj):
-        # Получаем связанные данные через JOIN
-        histories = History.objects.filter(PATIENTNUMBER=obj.PATIENTNUMBER)
-        researches_data = []
+        try:
+            from django.db import connections
 
-        for history in histories:
-            researches = Researches.objects.filter(KEY_HISTORY=history.KEY)
-            for research in researches:
-                results = ResultResearch.objects.filter(
-                    KEY_RESEARCH=research.KEY,
-                    KEY_RESEARCH_TYPE__startswith='Roslab'
-                )
-                for result in results:
-                    researches_data.append({
-                        'ACTUALDATETIME': research.ACTUALDATETIME,
-                        'RESEARCH_CATEGORY': research.RESEARCH_CATEGORY,
-                        'RESULTFORMZAKL': result.RESULTFORMZAKL
-                    })
+            # Используем соединение с source_db
+            with connections['source_db'].cursor() as cursor:
+                query = """
+                SELECT 
+                    r."ACTUALDATETIME", 
+                    r."RESEARCH_CATEGORY", 
+                    rr2."RESULTFORMZAKL"
+                FROM "HISTORY" h
+                JOIN "RESEARCHES" r ON h."KEY" = r."KEY_HISTORY"
+                JOIN "RESEARCH_RESULTSR2" rr2 ON r."KEY" = rr2."KEY_RESEARCH"
+                WHERE h."PATIENTNUMBER" = %s
+                AND rr2."RESULTFORMZAKL" IS NOT NULL
+                AND rr2."RESULTFORMZAKL" != ''
+                AND TRIM(rr2."RESULTFORMZAKL") != ''
+                AND rr2."KEY_RESEARCH_TYPE" LIKE 'Roslab%%'
+                """
 
-        return researches_data
+                cursor.execute(query, [obj.PATIENTNUMBER])
+                columns = [col[0] for col in cursor.description]
+                return [
+                    dict(zip(columns, row))
+                    for row in cursor.fetchall()
+                ]
+
+        except Exception as e:
+            print(f"Ошибка при получении исследований: {e}")
+            return []
 
 
 class ResultResearchSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResultResearch
-        fields = '__all__'
+        fields = ['KEY_RESEARCH', 'RESULTFORMZAKL', 'KEY_RESEARCH_TYPE']
