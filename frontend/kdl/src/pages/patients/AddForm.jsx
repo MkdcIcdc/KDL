@@ -12,6 +12,9 @@ export default function AddForm({isOpen, onClose, children}) {
         surname: '',
         date_birth: ''
     });
+    const [isLoading, setIsLoading] = useState(false); // Новое состояние для загрузки
+
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const {id, value} = e.target;
@@ -75,12 +78,27 @@ export default function AddForm({isOpen, onClose, children}) {
         return `table-row ${selectedRow === rowId ? 'selected' : ''}`;
     };
 
+    const getCurrentDateTime = () => {
+            const now = new Date();
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = String(now.getFullYear()).slice(-2);
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+        };
+
     const addPatient = async () => {
         if (!selectedPatientNumber) {
             setError('Выберите пациента из таблицы');
             return;
         }
 
+        setIsLoading(true); // Блокируем интерфейс
+        setError('');
+
+        console.log(`[${getCurrentDateTime()}] Передаем пациента с номером:`, selectedPatientNumber);
         try{
             const response = await fetch('/api/db2_worker/add_patient/' ,{
                 method: 'POST',
@@ -91,14 +109,27 @@ export default function AddForm({isOpen, onClose, children}) {
                     PATIENTNUMBER: selectedPatientNumber
                 })
             });
+
             if (response.ok){
-                console.log('Пациент добавлен');
+                console.log(`[${getCurrentDateTime()}] Пациент добавлен`);
+
+                // Закрываем модальное окно
+                onClose();
+
+                // Обновляем страницу
+                window.location.reload();
+
+                // Или альтернативный вариант - навигация (раскомментируйте если нужно)
+                // navigate(0); // Перезагружает текущий маршрут
+
             } else{
                 setError('Ошибка при добавлении пациента');
             }
 
         } catch (err){
             setError('Ошибка соединения с сервером');
+        } finally {
+            setIsLoading(false); // Разблокируем интерфейс в любом случае
         }
     }
 
@@ -114,15 +145,25 @@ export default function AddForm({isOpen, onClose, children}) {
                 date_birth: ''
             });
             setSelectedRow('');
+            setIsLoading(false); // Сбрасываем состояние загрузки при закрытии
         }
     }, [isOpen]);
 
     if (!isOpen) return null;
 
     return (
-        <div className='add-window-background' onClick={onClose}>
+        <div className={`add-window-background ${isLoading ? 'loading' : ''}`} onClick={isLoading ? undefined : onClose}>
+            {/* Индикатор загрузки */}
+            {isLoading && (
+                <div className="loading-overlay">
+                    <div className="loading-spinner"></div>
+                    <div className="loading-text">Добавление пациента...</div>
+                </div>
+            )}
+
             <div className={patients.length > 0 ? 'add-window-searched' : 'add-window-main'}
-                 onClick={(e) => e.stopPropagation()}>
+                 onClick={(e) => e.stopPropagation()}
+                 style={{ pointerEvents: isLoading ? 'none' : 'auto', opacity: isLoading ? 0.7 : 1 }}>
                 {error && <div className="error-message">{error}</div>}
                 {patients.length === 0 ? (
                     // Показываем поля для поиска
@@ -135,6 +176,7 @@ export default function AddForm({isOpen, onClose, children}) {
                                 placeholder=" "
                                 value={formData.s_name}
                                 onChange={handleInputChange}
+                                disabled={isLoading}
                             />
                             <label className="search-item-label">Фамилия</label>
                         </div>
@@ -146,6 +188,7 @@ export default function AddForm({isOpen, onClose, children}) {
                                 placeholder=" "
                                 value={formData.name}
                                 onChange={handleInputChange}
+                                disabled={isLoading}
                             />
                             <label className="search-item-label">Имя</label>
                         </div>
@@ -157,6 +200,7 @@ export default function AddForm({isOpen, onClose, children}) {
                                 placeholder=" "
                                 value={formData.surname}
                                 onChange={handleInputChange}
+                                disabled={isLoading}
                             />
                             <label className="search-item-label">Отчество</label>
                         </div>
@@ -168,12 +212,17 @@ export default function AddForm({isOpen, onClose, children}) {
                                 placeholder=" "
                                 value={formData.date_birth}
                                 onChange={handleInputChange}
+                                disabled={isLoading}
                             />
                             <label className="search-item-label">Дата рождения</label>
                         </div>
                         <div className='btns-container'>
-                            <button className='search-ptn-btn' onClick={searchPatient}>
-                                Найти пациента
+                            <button
+                                className='search-ptn-btn'
+                                onClick={searchPatient}
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Поиск...' : 'Найти пациента'}
                             </button>
                         </div>
 
@@ -192,8 +241,9 @@ export default function AddForm({isOpen, onClose, children}) {
                             <tbody>
                             {patients.map((patient, index) => (
                                 <tr key={index}
-                                    onClick={() => handleRowClick(index, patient)}
+                                    onClick={() => !isLoading && handleRowClick(index, patient)}
                                     className={getRowClassName(index)}
+                                    style={{ cursor: isLoading ? 'not-allowed' : 'pointer' }}
                                 >
                                     <td>{patient.LASTNAME} {patient.FIRSTNAME} {patient.MIDDLENAME}</td>
                                     <td>{patient.BDAY}</td>
@@ -203,18 +253,20 @@ export default function AddForm({isOpen, onClose, children}) {
                             </tbody>
                         </table>
                         <div className='btns-container-searched'>
-                            <button className='add-ptn-btn'
-                                    onClick={addPatient}
-                                    disabled={!selectedPatientNumber}
+                            <button
+                                className='add-ptn-btn'
+                                onClick={addPatient}
+                                disabled={!selectedPatientNumber || isLoading}
                             >
-                                Добавить пациента
+                                {isLoading ? 'Добавление...' : 'Добавить пациента'}
                             </button>
-                            <button className='back-to-search-btn' onClick={backToSearch}>
+                            <button
+                                className='back-to-search-btn'
+                                onClick={backToSearch}
+                                disabled={isLoading}
+                            >
                                 Новый поиск
                             </button>
-                            {/*<button className='modal-close' onClick={onClose}>
-                                Закрыть
-                            </button>*/}
                         </div>
                     </div>
                 )}
