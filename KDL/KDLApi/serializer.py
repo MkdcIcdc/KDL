@@ -100,5 +100,5 @@ class DOSWriteSerializer(serializers.ModelSerializer):
             'age_min', 'age_max', 'potc', 'tod', 'norm_min', 'norm_max',
             'mod_dev_min', 'mod_dev_max', 'exp_dev_min', 'exp_dev_max',
             'crit_dev_min', 'crit_dev_max', 'deviation',
-            'pos_dyn', 'neg_dyn', 'priority', 'weight', 'rec'
+            'pos_dyn', 'neg_dyn', 'priority', 'weight', 'consectary', 'rec'
         ]

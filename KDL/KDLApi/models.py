@@ -84,6 +84,7 @@ class DOS(models.Model):
     neg_dyn = models.ForeignKey(Dynamics, related_name="negative_dyn", on_delete=models.SET_NULL, null=True)
     priority = models.ForeignKey(Priority, on_delete=models.SET_NULL, null=True)
     weight = models.ForeignKey(Weight, on_delete=models.SET_NULL, null=True)
+    consectary = models.CharField(max_length=50, null=True)
     rec = models.ForeignKey(Rec, on_delete=models.SET_NULL, null=True)
 
     class Meta:
