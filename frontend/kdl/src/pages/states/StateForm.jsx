@@ -14,7 +14,7 @@ const dropdownFields = [
 const numberFields = [
     "age_min", "age_max", "norm_max", "norm_min",
     "mod_dev_min", "mod_dev_max", "exp_dev_min", "exp_dev_max",
-    "crit_dev_min", "crit_dev_max"
+    "crit_dev_min", "crit_dev_max", "consectary"
 ];
 
 const dropdownApiEndpoints = {
@@ -154,7 +154,7 @@ export default function TableWithDragAndColumnSelector() {
             const val = entry[col.id];
 
             if (numberFields.includes(col.id)) {
-                payload[col.id] = val !== "" && val != null ? Number(val) : null;
+                payload[col.id] = val !== "" && val != null ? val : null;
             } else {
                 // для dropdown и текстовых полей просто передаём строку или null
                 payload[col.id] = val || null;
