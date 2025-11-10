@@ -10,6 +10,7 @@ export const glossaries = [
     {id: 'tod', title: 'Единицы измерения'},
     {id: 'deviation', title: 'Отклонение'},
     {id: 'dynamics', title: 'Динамика'},
+    {id: 'consectary', title: 'Выводы'},
     {id: 'rec', title: 'Рекомендации'},
 ];
 

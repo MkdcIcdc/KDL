@@ -8,13 +8,13 @@ import {glossaries_shared} from "../glossaries/GlossariesData";
 
 const dropdownFields = [
     'system', 'organ', 'state', 'potc', 'parameter', 'priority', 'weight',
-    'gender', 'tod', 'deviation', 'rec', 'pos_dyn', 'neg_dyn'
+    'gender', 'tod', 'deviation', 'consectary', 'rec', 'pos_dyn', 'neg_dyn'
 ];
 
 const numberFields = [
     "age_min", "age_max", "norm_max", "norm_min",
     "mod_dev_min", "mod_dev_max", "exp_dev_min", "exp_dev_max",
-    "crit_dev_min", "crit_dev_max", "consectary"
+    "crit_dev_min", "crit_dev_max"
 ];
 
 const dropdownApiEndpoints = {
@@ -28,6 +28,7 @@ const dropdownApiEndpoints = {
     gender: "gender",
     tod: "tod",
     deviation: "deviation",
+    consectary: "consectary",
     rec: "rec",
     pos_dyn: "dynamics",
     neg_dyn: "dynamics",
