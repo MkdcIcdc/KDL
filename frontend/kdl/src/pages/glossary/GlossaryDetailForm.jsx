@@ -59,26 +59,25 @@ function GlossaryDetailForm() {
     const handleSave = () => {
         const entry = entries[editIndex];
 
-        // Более надежная проверка на новую запись
-        const isNew = !entry.id || String(entry.id).startsWith('temp') ||
-            isNaN(entry.id) || typeof entry.id === 'string';
+        // Простая и надежная проверка: если id временный (большое число) или отсутствует - это новая запись
+        const isNew = !entry.id || entry.id > 1000000000; // ID больше 1 млрд считаем временными
 
         const payload = id === "weight"
-            ? {value: Number(editValue), num: entry.num}
-            : {name: editValue, num: entry.num};
+            ? { value: Number(editValue), num: entry.num }
+            : { name: editValue, num: entry.num };
 
-        // Исправленный URL
+        // Исправленный URL - добавлен префикс /api/ для всех случаев
         const url = isNew
             ? `/api/${id}/`
             : `/api/${id}/${entry.id}/`;
 
         const method = isNew ? 'POST' : 'PATCH';
 
-        console.log('Saving:', {method, url, payload, isNew}); // Для отладки
+        console.log('Saving:', { method, url, payload, isNew, entryId: entry.id });
 
         fetch(url, {
             method,
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         })
             .then(async res => {
@@ -119,7 +118,8 @@ function GlossaryDetailForm() {
     const handleCancel = () => {
         const entry = entries[editIndex];
         let updatedEntries = [...entries];
-        if (String(entry.id).startsWith('temp') || String(entry.id).startsWith('1')) {
+        // Обновленная проверка для временных записей
+        if (!entry.id || entry.id > 1000000000) {
             updatedEntries = entries.filter((_, idx) => idx !== editIndex);
             const totalAfterRemoval = updatedEntries.length;
             const maxPage = Math.ceil(totalAfterRemoval / entriesPerPage);
@@ -132,7 +132,7 @@ function GlossaryDetailForm() {
 
     const handleAddEntry = () => {
         const newEntry = {
-            id: Date.now(),
+            id: Date.now(), // Большое число - будет распознано как временное
             name: '',
             num: entries.length + 1
         };
