@@ -1,13 +1,13 @@
 from rest_framework import viewsets
 from .models import (
     System, Organ, State, Parameter, Gender, POTC, TOD,
-    Deviation, Dynamics, Priority, Weight, Rec, DOS
+    Deviation, Dynamics, Priority, Weight, Consectary, Rec, DOS
 )
 from .serializer import (
     SystemSerializer, OrganSerializer, StateSerializer, ParameterSerializer,
     GenderSerializer, POTCSerializer, TODSerializer, DeviationSerializer,
-    DynamicsSerializer, PrioritySerializer, WeightSerializer, RecSerializer,
-    DOSReadSerializer, DOSWriteSerializer
+    DynamicsSerializer, PrioritySerializer, WeightSerializer, ConsectarySerializer,
+    RecSerializer, DOSReadSerializer, DOSWriteSerializer
 )
 
 # 🔹 Базовый ViewSet для глоссариев
@@ -60,6 +60,10 @@ class PriorityViewSet(GlossaryViewSet):
 class WeightViewSet(GlossaryViewSet):
     queryset = Weight.objects.all()
     serializer_class = WeightSerializer
+
+class ConsectaryViewSet(GlossaryViewSet):
+    queryset = Consectary.objects.all()
+    serializer_class = ConsectarySerializer
 
 class RecViewSet(GlossaryViewSet):
     queryset = Rec.objects.all()

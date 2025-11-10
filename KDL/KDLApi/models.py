@@ -61,6 +61,10 @@ class Rec(Glossary):
     class Meta:
         db_table = 'rec'
 
+class Consectary(Glossary):
+    class Meta:
+        db_table = 'consectary'
+
 class DOS(models.Model):
     system = models.ForeignKey(System, on_delete=models.SET_NULL, null=True)
     organ = models.ForeignKey(Organ, on_delete=models.SET_NULL, null=True)
@@ -84,7 +88,7 @@ class DOS(models.Model):
     neg_dyn = models.ForeignKey(Dynamics, related_name="negative_dyn", on_delete=models.SET_NULL, null=True)
     priority = models.ForeignKey(Priority, on_delete=models.SET_NULL, null=True)
     weight = models.ForeignKey(Weight, on_delete=models.SET_NULL, null=True)
-    consectary = models.CharField(max_length=50, null=True)
+    consectary = models.ForeignKey(Consectary, on_delete=models.SET_NULL, null=True)
     rec = models.ForeignKey(Rec, on_delete=models.SET_NULL, null=True)
 
     class Meta:

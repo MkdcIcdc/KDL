@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     SystemViewSet, OrganViewSet, StateViewSet, ParameterViewSet,
     GenderViewSet, POTCViewSet, TODViewSet, DeviationViewSet, DynamicsViewSet,
-    PriorityViewSet, WeightViewSet, RecViewSet, DOSViewSet
+    PriorityViewSet, WeightViewSet, ConsectaryViewSet, RecViewSet, DOSViewSet
 )
 
 from patient.views import PatientViewSet, ResearchViewSet
@@ -25,6 +25,7 @@ router.register(r'deviation', DeviationViewSet)
 router.register(r'dynamics', DynamicsViewSet)
 router.register(r'priority', PriorityViewSet)
 router.register(r'weight', WeightViewSet)
+router.register(r'consectary', ConsectaryViewSet)
 router.register(r'rec', RecViewSet)
 
 # Сводная таблица

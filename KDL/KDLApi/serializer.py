@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import (
     System, Organ, State, Parameter, Gender, POTC, TOD,
-    Deviation, Dynamics, Priority, Weight, Rec, DOS
+    Deviation, Dynamics, Priority, Weight, Rec, Consectary, DOS
 )
 
 
@@ -67,6 +67,11 @@ class WeightSerializer(BaseGlossarySerializer):
         fields = ['id', 'value']
 
 
+class ConsectarySerializer(BaseGlossarySerializer):
+    class Meta(BaseGlossarySerializer.Meta):
+        model = Consectary
+
+
 class RecSerializer(BaseGlossarySerializer):
     class Meta(BaseGlossarySerializer.Meta):
         model = Rec
@@ -85,6 +90,7 @@ class DOSReadSerializer(serializers.ModelSerializer):
     neg_dyn = serializers.CharField(source='neg_dyn.name', read_only=True)
     priority = serializers.CharField(source='priority.name', read_only=True)
     weight = serializers.CharField(source='weight.value', read_only=True)
+    consectary = serializers.CharField(source='consectary.name', read_only=True)
     rec = serializers.CharField(source='rec.name', read_only=True)
 
     class Meta:
