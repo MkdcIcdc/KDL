@@ -18,55 +18,55 @@ class GlossaryViewSet(viewsets.ModelViewSet):
 
 # 🔹 Конкретные ViewSet-ы для каждого глоссария
 class SystemViewSet(GlossaryViewSet):
-    queryset = System.objects.all()
+    queryset = System.objects.all().order_by('id')
     serializer_class = SystemSerializer
 
 class OrganViewSet(GlossaryViewSet):
-    queryset = Organ.objects.all()
+    queryset = Organ.objects.all().order_by('id')
     serializer_class = OrganSerializer
 
 class StateViewSet(GlossaryViewSet):
-    queryset = State.objects.all()
+    queryset = State.objects.all().order_by('id')
     serializer_class = StateSerializer
 
 class ParameterViewSet(GlossaryViewSet):
-    queryset = Parameter.objects.all()
+    queryset = Parameter.objects.all().order_by('id')
     serializer_class = ParameterSerializer
 
 class GenderViewSet(GlossaryViewSet):
-    queryset = Gender.objects.all()
+    queryset = Gender.objects.all().order_by('id')
     serializer_class = GenderSerializer
 
 class POTCViewSet(GlossaryViewSet):
-    queryset = POTC.objects.all()
+    queryset = POTC.objects.all().order_by('id')
     serializer_class = POTCSerializer
 
 class TODViewSet(GlossaryViewSet):
-    queryset = TOD.objects.all()
+    queryset = TOD.objects.all().order_by('id')
     serializer_class = TODSerializer
 
 class DeviationViewSet(GlossaryViewSet):
-    queryset = Deviation.objects.all()
+    queryset = Deviation.objects.all().order_by('id')
     serializer_class = DeviationSerializer
 
 class DynamicsViewSet(GlossaryViewSet):
-    queryset = Dynamics.objects.all()
+    queryset = Dynamics.objects.all().order_by('id')
     serializer_class = DynamicsSerializer
 
 class PriorityViewSet(GlossaryViewSet):
-    queryset = Priority.objects.all()
+    queryset = Priority.objects.all().order_by('id')
     serializer_class = PrioritySerializer
 
 class WeightViewSet(GlossaryViewSet):
-    queryset = Weight.objects.all()
+    queryset = Weight.objects.all().order_by('id')
     serializer_class = WeightSerializer
 
 class ConsectaryViewSet(GlossaryViewSet):
-    queryset = Consectary.objects.all()
+    queryset = Consectary.objects.all().order_by('id')
     serializer_class = ConsectarySerializer
 
 class RecViewSet(GlossaryViewSet):
-    queryset = Rec.objects.all()
+    queryset = Rec.objects.all().order_by('id')
     serializer_class = RecSerializer
 
 
