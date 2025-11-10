@@ -58,26 +58,43 @@ function GlossaryDetailForm() {
 
     const handleSave = () => {
         const entry = entries[editIndex];
-        const isNew = String(entry.id).startsWith('1'); // временный id
+
+        // Более надежная проверка на новую запись
+        const isNew = !entry.id || String(entry.id).startsWith('temp') ||
+            isNaN(entry.id) || typeof entry.id === 'string';
 
         const payload = id === "weight"
-            ? { value: Number(editValue), num: entry.num }
-            : { name: editValue, num: entry.num };
+            ? {value: Number(editValue), num: entry.num}
+            : {name: editValue, num: entry.num};
 
+        // Исправленный URL
         const url = isNew
             ? `/api/${id}/`
-            : `/${id}/${entry.id}/`;
+            : `/api/${id}/${entry.id}/`;
 
         const method = isNew ? 'POST' : 'PATCH';
 
+        console.log('Saving:', {method, url, payload, isNew}); // Для отладки
+
         fetch(url, {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(payload)
         })
             .then(async res => {
                 const data = await res.json();
-                if (!res.ok) throw new Error(data);
+                if (!res.ok) {
+                    // Более информативное сообщение об ошибке
+                    const errorInfo = {
+                        status: res.status,
+                        statusText: res.statusText,
+                        url: url,
+                        method: method,
+                        responseData: data
+                    };
+                    console.error('Server error details:', errorInfo);
+                    throw new Error(`HTTP ${res.status}: ${JSON.stringify(errorInfo)}`);
+                }
                 return data;
             })
             .then(serverEntry => {
@@ -85,12 +102,18 @@ function GlossaryDetailForm() {
                     ...serverEntry,
                     name: id === "weight" ? String(serverEntry.value) : serverEntry.name
                 };
-                const updatedEntries = entries.map((e, idx) => idx === editIndex ? updatedEntry : e);
+                const updatedEntries = entries.map((e, idx) =>
+                    idx === editIndex ? updatedEntry : e
+                );
                 setEntries(updatedEntries);
                 setEditIndex(null);
                 setEditValue('');
             })
-            .catch(err => console.error('Ошибка при сохранении записи:', err));
+            .catch(err => {
+                console.error('Полная ошибка при сохранении записи:', err);
+                // Можно добавить уведомление для пользователя
+                alert('Ошибка при сохранении. Проверьте консоль для подробностей.');
+            });
     };
 
     const handleCancel = () => {
