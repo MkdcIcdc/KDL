@@ -38,7 +38,7 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                     'password': db_settings['PASSWORD'],
                     'client_encoding': 'utf8',
                 },
-                research_id=param,
+                research_main_id=param,
             )[1]
 
             print(f'Result id: {result_id}')
