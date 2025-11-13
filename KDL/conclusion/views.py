@@ -29,7 +29,7 @@ class ConclusionViewSet(viewsets.ModelViewSet):
 
 
             db_settings = settings.DATABASES['default']
-            result_id = interpreter.getState_by_reseach_id_and_save_to_base(
+            result_id = interpreter.getStates_by_reseachs_in_day_and_save_to_base(
                 param_db={
                     'host': db_settings['HOST'],
                     'port': db_settings['PORT'],
