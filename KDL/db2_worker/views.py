@@ -1,0 +1,122 @@
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from .models import SearchPatient
+from patient.models import Patient, Research
+from .serializer import SearchPatientSerializer, AddPatientSerializer, PatientResearchSerializer
+
+
+class TestPatientViewSet(viewsets.ModelViewSet):
+    queryset = SearchPatient.objects.all()
+    serializer_class = SearchPatientSerializer
+
+    @action(detail=False, methods=['post'])
+    def get_patient(self, request):
+        """
+        API Endpoint для получения пациента из медстата
+        :param request: запрос от frontend
+        :return: возвращаются все найденные пациенты согласно serializer
+        """
+        try:
+            data = request.data
+            p_sname = data.get('s_name')
+            p_name = data.get('name')
+            p_surname = data.get('surname')
+            p_birth = data.get('date_birth')
+
+            # Получаем все подходящие записи
+            patients = SearchPatient.objects.filter(
+                LASTNAME=p_sname,
+                FIRSTNAME=p_name,
+                MIDDLENAME=p_surname,
+                BDAY=p_birth
+            )
+
+            if not patients.exists():
+                return Response({
+                    'status': 'error',
+                    'message': 'Пациенты не найдены'
+                })
+
+            # Сериализуем все найденные объекты
+            serializer = SearchPatientSerializer(patients, many=True)
+
+            return Response({
+                'status': 'success',
+                'patients': serializer.data,
+                'message': f'Найдено {patients.count()} пациентов'
+            })
+
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': f'Ошибка сервера: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['post'])
+    def add_patient(self, request):
+        try:
+            data = request.data
+            p_num = data.get('PATIENTNUMBER')
+            patient = SearchPatient.objects.filter(PATIENTNUMBER=p_num).first()
+
+            # Используем оптимизированный сериализатор
+            research_serializer = PatientResearchSerializer(patient)
+            researches_data = research_serializer.data.get('researches', [])
+
+            p_serializer = AddPatientSerializer(patient)
+            saved_patient = self.save_patient(p_serializer.data, researches_data)
+
+            return Response({
+                'status': 'success',
+                'patient_id': saved_patient,
+                'patient': p_serializer.data,
+                'researches': researches_data,
+                'message': 'Пациент и его анализы найдены и добавлены в БД'
+            })
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': f'Ошибка сервера: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def save_patient(self, s_patient, s_researches):
+        patient, created = Patient.objects.update_or_create(
+            medstat_id=s_patient.get('PATIENTNUMBER'),
+            defaults={
+                's_name': s_patient.get('LASTNAME'),
+                'name': s_patient.get('FIRSTNAME'),
+                'surname': s_patient.get('MIDDLENAME'),
+                'gender': s_patient.get('sex'),
+                'date_birth': s_patient.get('BDAY'),
+                'p_series': s_patient.get('DOCSERIA'),
+                'p_number': s_patient.get('DOCNUMBER'),
+                'snils': s_patient.get('SNILSNUMBER'),
+                'med_polis': s_patient.get('DOCUMENTNUMBER'),
+                'medstat_id': s_patient.get('PATIENTNUMBER'),
+            }
+        )
+        new_p_id = patient.id
+        for research in s_researches:
+            try:
+                research_date = research.get('ACTUALDATETIME')
+                if research_date and len(research_date) >= 10:
+                    date_str = research_date[:10]  # берем только дату
+                    research_date = date_str
+                else:
+                    research_date = None
+            except:
+                research_date = None
+
+            patient_obj = Patient.objects.get(id=new_p_id)
+            Research.objects.create(
+                patient=patient_obj,
+                date=research_date,
+                research_name=research.get('RESEARCH_CATEGORY'),
+                data=research.get('RESULTFORMZAKL')
+            )
+        return patient.id
+
+
+

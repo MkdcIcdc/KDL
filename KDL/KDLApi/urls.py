@@ -1,0 +1,47 @@
+from django.urls import path
+from rest_framework.routers import DefaultRouter
+from .views import (
+    SystemViewSet, OrganViewSet, StateViewSet, ParameterViewSet,
+    GenderViewSet, POTCViewSet, TODViewSet, DeviationViewSet, DynamicsViewSet,
+    PriorityViewSet, WeightViewSet, ConsectaryViewSet, RecViewSet, DOSViewSet
+)
+
+from patient.views import PatientViewSet, ResearchViewSet
+from conclusion.views import ConclusionViewSet
+from employer.views import EmployerViewSet, ADViewSet
+from db2_worker.views import TestPatientViewSet
+
+router = DefaultRouter()
+
+# Глоссарии
+router.register(r'system', SystemViewSet)
+router.register(r'organ', OrganViewSet)
+router.register(r'state', StateViewSet)
+router.register(r'parameter', ParameterViewSet)
+router.register(r'gender', GenderViewSet)
+router.register(r'potc', POTCViewSet)
+router.register(r'tod', TODViewSet)
+router.register(r'deviation', DeviationViewSet)
+router.register(r'dynamics', DynamicsViewSet)
+router.register(r'priority', PriorityViewSet)
+router.register(r'weight', WeightViewSet)
+router.register(r'consectary', ConsectaryViewSet)
+router.register(r'rec', RecViewSet)
+
+# Сводная таблица
+router.register(r'dos', DOSViewSet)
+
+# Пациенты
+router.register(prefix=r'patient', viewset=PatientViewSet, basename='patient')
+
+# Результаты анализов КДЛ пациента
+router.register(prefix=r'research', viewset=ResearchViewSet, basename='research')
+
+# Заключение по результатам анализов КДЛ
+router.register(prefix=r'conclusion', viewset=ConclusionViewSet, basename='conclusion')
+
+#Сотрудники
+router.register(prefix=r'employer', viewset=EmployerViewSet, basename='employer')
+router.register(prefix=r'ad', viewset=ADViewSet, basename='ad')
+router.register(prefix=r'db2_worker', viewset=TestPatientViewSet, basename='db2_worker')
+urlpatterns = router.urls
