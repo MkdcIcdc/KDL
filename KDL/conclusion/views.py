@@ -43,9 +43,7 @@ class ConclusionViewSet(viewsets.ModelViewSet):
 
             print(f'Result id: {result_id}')
             conclusion = Conclusion.objects.get(id=result_id)
-            print(conclusion)
             from_db_list = from_db(result_id)
-            print(from_db_list)
             file_path = create_word_document(list(from_db_list))
 
             # Сохраняем путь к файлу в базе
