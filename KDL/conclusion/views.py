@@ -29,7 +29,7 @@ class ConclusionViewSet(viewsets.ModelViewSet):
 
 
             db_settings = settings.DATABASES['default']
-            result_id = interpreter.getState_by_reseach_id_and_save_to_base_v2(
+            result_id = interpreter.getStates_by_reseachs_in_day_and_save_to_base(
                 param_db={
                     'host': db_settings['HOST'],
                     'port': db_settings['PORT'],
@@ -38,7 +38,7 @@ class ConclusionViewSet(viewsets.ModelViewSet):
                     'password': db_settings['PASSWORD'],
                     'client_encoding': 'utf8',
                 },
-                research_id=param,
+                research_main_id=param,
             )[1]
 
             print(f'Result id: {result_id}')
