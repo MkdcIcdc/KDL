@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import arrow from '../../buttons/up_arrow.svg';
 import LabResultsTable from './LabData';
@@ -14,6 +14,9 @@ function PatientDetailForm() {
     const [results, setResults] = useState({});
     const [loadingResearch, setLoadingResearch] = useState(null);
     const [conclusionStatus, setConclusionStatus] = useState({});
+
+    // Кэш для статусов заключений
+    const conclusionCache = useRef({});
 
     const transformResearchData = (apiData) => {
         return apiData.map(research => ({
@@ -87,6 +90,8 @@ function PatientDetailForm() {
 
                 const transformedData = transformResearchData(researchResult);
                 setResearchData(transformedData);
+
+                // Группируем сразу здесь
                 setGroupedResearchData(groupResearchByDate(transformedData));
 
             } catch (err) {
@@ -102,34 +107,96 @@ function PatientDetailForm() {
         }
     }, [id]);
 
+    // ✅ Оптимизированная загрузка статусов заключений
     useEffect(() => {
-        if (researchData) {
-            setGroupedResearchData(groupResearchByDate(researchData));
-        }
-    }, [researchData]);
+        let isMounted = true;
+        const controller = new AbortController();
 
-    // ✅ Загружаем статусы заключений один раз при изменении researchData
-    useEffect(() => {
         const loadAllConclusionStatuses = async () => {
-            if (!researchData) return;
+            if (!researchData || researchData.length === 0) return;
 
-            const statuses = {};
-            for (const research of researchData) {
-                try {
-                    const response = await fetch(`/api/conclusion/check_conclusion/?research_id=${research.id}`);
-                    const result = await response.json();
-                    statuses[research.id] = result;
-                } catch (error) {
-                    console.error('Ошибка при проверке заключения:', error);
-                    statuses[research.id] = { exists: false };
+            console.log(`Загружаем статусы для ${researchData.length} исследований`);
+
+            // Получаем УНИКАЛЬНЫЕ ID исследований
+            const uniqueResearchIds = [...new Set(researchData.map(r => r.id))];
+            console.log(`Уникальных исследований: ${uniqueResearchIds.length}`);
+
+            const statuses = { ...conclusionCache.current };
+            const idsToFetch = [];
+
+            // Проверяем, какие ID нужно загружать
+            uniqueResearchIds.forEach(id => {
+                if (conclusionCache.current[id] === undefined) {
+                    idsToFetch.push(id);
+                } else {
+                    statuses[id] = conclusionCache.current[id];
+                }
+            });
+
+            console.log(`Нужно загрузить: ${idsToFetch.length} статусов`);
+
+            if (idsToFetch.length === 0) {
+                if (isMounted) {
+                    setConclusionStatus(statuses);
+                }
+                return;
+            }
+
+            try {
+                // Используем Promise.all для параллельных запросов
+                const promises = idsToFetch.map(async (researchId) => {
+                    try {
+                        const response = await fetch(
+                            `/api/conclusion/check_conclusion/?research_id=${researchId}`,
+                            {
+                                signal: controller.signal,
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                }
+                            }
+                        );
+
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                        const result = await response.json();
+                        return { researchId, result };
+                    } catch (error) {
+                        if (error.name !== 'AbortError') {
+                            console.error('Ошибка при проверке заключения для researchId:', researchId, error);
+                            return { researchId, result: { exists: false } };
+                        }
+                        return null;
+                    }
+                });
+
+                const results = await Promise.all(promises);
+
+                if (isMounted) {
+                    results.forEach(item => {
+                        if (item) {
+                            statuses[item.researchId] = item.result;
+                            // Сохраняем в кэш
+                            conclusionCache.current[item.researchId] = item.result;
+                        }
+                    });
+                    setConclusionStatus(statuses);
+                }
+            } catch (error) {
+                if (isMounted && error.name !== 'AbortError') {
+                    console.error('Ошибка при загрузке статусов:', error);
                 }
             }
-            setConclusionStatus(statuses);
         };
 
-        if (researchData && researchData.length > 0) {
-            loadAllConclusionStatuses();
-        }
+        // Запускаем с небольшой задержкой
+        const timeoutId = setTimeout(loadAllConclusionStatuses, 100);
+
+        return () => {
+            isMounted = false;
+            controller.abort();
+            clearTimeout(timeoutId);
+        };
     }, [researchData]);
 
     if (loading) return <div className="loading">Загрузка данных пациента...</div>;
@@ -169,13 +236,18 @@ function PatientDetailForm() {
                 }
             }));
 
+            // Обновляем статус и кэш
+            const newStatus = {
+                exists: true,
+                download_url: data.result.download_url
+            };
+
             setConclusionStatus(prev => ({
                 ...prev,
-                [researchId]: {
-                    exists: true,
-                    download_url: data.result.download_url
-                }
+                [researchId]: newStatus
             }));
+
+            conclusionCache.current[researchId] = newStatus;
 
         } catch (error) {
             console.error('Ошибка:', error);
@@ -191,7 +263,7 @@ function PatientDetailForm() {
     };
 
     const downloadConclusion = async (dUrl, filename) => {
-        try{
+        try {
             const response = await fetch(`${dUrl}`);
             if (!response.ok) {
                 throw new Error('Ошибка скачивания файла')
@@ -205,7 +277,7 @@ function PatientDetailForm() {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-        } catch (error){
+        } catch (error) {
             console.log('Ошибка скачивания:', error);
             alert('Ошибка при скачивании файла');
         }
