@@ -63,21 +63,21 @@ def create_word_document(in_list: list):
 
     for conclusion in conclusions:
         for category, content in conclusion.items():
-            # Если ключ уже существует, добавляем к существующему списку
-            if category not in func_dict:
-                func_dict[category] = []
-
             # Ищем самый глубокий уровень вложенности
             last_key, last_value = get_last_key_value_pair(content)
-            last_key = last_key.split(':', 1)[0]
+            diagnosis = last_key.split(':', 1)[0]  # Это будет "Дислипидемия", "Гипергликемия" и т.д.
+
+            # Если диагноз уже существует, добавляем к существующему списку
+            if diagnosis not in func_dict:
+                func_dict[diagnosis] = []
 
             # Обрабатываем значения
             if isinstance(last_value, list):
                 for sub_item_text in last_value:
                     sub_item_parts = sub_item_text.split(':', 1)[0]
                     # Добавляем только если такого элемента еще нет в списке
-                    if sub_item_parts not in func_dict[category]:
-                        func_dict[category].append(sub_item_parts)
+                    if sub_item_parts not in func_dict[diagnosis]:
+                        func_dict[diagnosis].append(sub_item_parts)
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -86,6 +86,7 @@ def create_word_document(in_list: list):
 
     template_path = os.path.join(current_dir, 'template.docx')
     tpl = DocxTemplate(template_path)
+
     tpl.render({
         "p_data": p_data,
         "func_dict": func_dict,
