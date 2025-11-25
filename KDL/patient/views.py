@@ -14,7 +14,7 @@ class ResearchViewSet(viewsets.ModelViewSet):
     serializer_class = ResearchSerializer
 
     def get_queryset(self):
-        queryset = Research.objects.all().order_by('date')
+        queryset = Research.objects.all().order_by('-date')
         patient = self.request.query_params.get('patient')
         if patient:
             queryset = queryset.filter(patient=patient)
