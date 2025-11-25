@@ -199,7 +199,7 @@ const LabResultsTable = ({research}) => {
                     <button className='btn-view-result' onClick={toggleDetails}>
                         Результат исследования
                     </button>
-                    {renderConclusionButtons(research.id)}
+                    {/*{renderConclusionButtons(research.id)}*/}
                 </div>
 
                 {/*<img className='cld-arrow' src={arrow} alt=''/>*/}
