@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import {useParams, useNavigate} from "react-router-dom";
 import arrow from '../../buttons/up_arrow.svg';
+import shared_triangle from '../../buttons/shaded_triangle_up.svg'
 import LabResultsTable from './LabData';
 
 function PatientDetailForm() {
@@ -370,11 +371,11 @@ function PatientDetailForm() {
                             return (
                                 <details key={date} className='dates'>
                                     <summary className='ld-body'>
-                                        {date}
                                         <div>
-                                            {firstResearchId && renderConclusionButtons(firstResearchId)}
-                                            <img className='dates-arrow' src={arrow} alt=''/>
+                                            {date}
+                                            <img className='dates-arrow' src={shared_triangle} alt=''/>
                                         </div>
+                                        {firstResearchId && renderConclusionButtons(firstResearchId)}
                                     </summary>
                                     <div className='detail-lab-data'>
                                         {researches.map((research, index) => (

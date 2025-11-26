@@ -973,6 +973,10 @@ input:disabled {
     display: none;
 }
 
+.dates-arrow{
+    margin: 0 0 0 25px;
+}
+
 .dates[open] summary img.dates-arrow {
     transform: rotate(180deg);
 }
