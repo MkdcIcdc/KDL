@@ -96,12 +96,12 @@ DATABASES = {
         'PORT': config('POSTGRES_PORT', default='5432'),
     },
     'source_db':{
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('SPG_DB'),
-        'USER': config('SPG_USER'),
-        'PASSWORD': config('SPG_PASSWORD'),
-        'HOST': config('SPG_HOST'),
-        'PORT': config('SPG_PORT'),
+        'ENGINE': 'ibm_db_django',
+        'NAME': config('DB2_DATABASE'),
+        'USER': config('DB2_UID'),
+        'PASSWORD': config('DB2_PWD'),
+        'HOST': config('DB2_HOST'),
+        'PORT': config('DB2_PORT'),
     }
 }
 
