@@ -2,10 +2,21 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+import os
+import pyodbc
+from pathlib import Path
+from dotenv import load_dotenv
 from .models import SearchPatient
 from patient.models import Patient, Research
 from .serializer import SearchPatientSerializer, AddPatientSerializer, PatientResearchSerializer
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / '.env'
+load_dotenv(env_path)
+
+# Проверка загрузки переменных (для отладки)
+print(f"DB2_HOST: {os.getenv('DB2_HOST')}")
+print(f"DB2_DATABASE: {os.getenv('DB2_DATABASE')}")
 
 class TestPatientViewSet(viewsets.ModelViewSet):
     queryset = SearchPatient.objects.all()
@@ -25,28 +36,70 @@ class TestPatientViewSet(viewsets.ModelViewSet):
             p_surname = data.get('surname')
             p_birth = data.get('date_birth')
 
-            # Получаем все подходящие записи
-            patients = SearchPatient.objects.filter(
-                lastname=p_sname,
-                firstname=p_name,
-                middlename=p_surname,
-                bday=p_birth
+
+            connection_string = (
+                f"DRIVER={{{os.getenv('DB2_DRIVER', 'IBM DB2 ODBC DRIVER')}}};"
+                f"DATABASE={os.getenv('DB2_DATABASE')};"
+                f"HOSTNAME={os.getenv('DB2_HOST')};"
+                f"PORT={os.getenv('DB2_PORT', '50000')};"
+                f"PROTOCOL={os.getenv('DB2_PROTOCOL', 'TCPIP')};"
+                f"UID={os.getenv('DB2_UID')};"
+                f"PWD={os.getenv('DB2_PWD')};"
             )
 
-            if not patients.exists():
+            conn = pyodbc.connect(connection_string)
+            cursor = conn.cursor()
+
+            query = """
+            SELECT 
+                PATIENTNUMBER, LASTNAME, FIRSTNAME, MIDDLENAME, BDAY, 
+                DOCSERIA, DOCNUMBER, SNILSNUMBER, DOCUMENTNUMBER
+            FROM PATIENTS
+            WHERE LASTNAME = ? and FIRSTNAME = ? and MIDDLENAME = ? and BDAY = ?
+            """
+
+            cursor.execute(query, p_sname, p_name, p_surname, p_birth)
+            patients = cursor.fetchall()
+
+            columns = [column[0] for column in cursor.description]
+            patients_list = []
+
+            for row in patients:
+                patient_dict = {}
+                for i, col in enumerate(columns):
+                    # Обработка даты, если это datetime объект
+                    value = row[i]
+                    if hasattr(value, 'isoformat'):
+                        value = value.isoformat()
+                    patient_dict[col] = value
+                patients_list.append(patient_dict)
+
+            if not patients:
                 return Response({
                     'status': 'error',
                     'message': 'Пациенты не найдены'
                 })
 
-            # Сериализуем все найденные объекты
-            serializer = SearchPatientSerializer(patients, many=True)
+            cursor.close()
+            conn.close()
 
             return Response({
                 'status': 'success',
-                'patients': serializer.data,
-                'message': f'Найдено {patients.count()} пациентов'
+                'message': f'Найдено {len(patients_list)} пациентов',
+                'patients': patients_list
             })
+
+
+
+
+            # Сериализуем все найденные объекты
+            # serializer = SearchPatientSerializer(patients, many=True)
+            #
+            # return Response({
+            #     'status': 'success',
+            #     'patients': serializer.data,
+            #     'message': f'Найдено {patients.count()} пациентов'
+            # })
 
         except Exception as e:
             return Response({

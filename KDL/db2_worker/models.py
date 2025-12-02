@@ -13,7 +13,7 @@ class Sex(models.Model):
 
 class SearchPatient(models.Model):
     patientnumber = models.CharField(max_length=20, primary_key=True)
-    bday = models.DateTimeField(null=True, blank=True)
+    bday = models.DateField(null=True, blank=True)
     contract = models.CharField(max_length=24, null=True, blank=True)
     phone = models.CharField(max_length=2469, null=True, blank=True)
     middlename = models.CharField(max_length=95, null=True, blank=True)
