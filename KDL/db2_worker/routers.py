@@ -37,6 +37,6 @@ class DatabaseRouter:
         """
         Миграции применяются только к default БД
         """
-        if app_label == 'db2_reader' and model_name.lower() in self.SOURCE_DB_MODELS:
+        if app_label == 'db2_worker' and model_name.lower() in self.SOURCE_DB_MODELS:
             return db == 'source_db'
         return db == 'default'

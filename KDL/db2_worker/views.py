@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from django.db import connections
 
 import os
 import pyodbc
@@ -17,6 +18,7 @@ load_dotenv(env_path)
 # Проверка загрузки переменных (для отладки)
 print(f"DB2_HOST: {os.getenv('DB2_HOST')}")
 print(f"DB2_DATABASE: {os.getenv('DB2_DATABASE')}")
+
 
 class TestPatientViewSet(viewsets.ModelViewSet):
     queryset = SearchPatient.objects.all()
@@ -36,76 +38,34 @@ class TestPatientViewSet(viewsets.ModelViewSet):
             p_surname = data.get('surname')
             p_birth = data.get('date_birth')
 
-
-            connection_string = (
-                f"DRIVER={{{os.getenv('DB2_DRIVER', 'IBM DB2 ODBC DRIVER')}}};"
-                f"DATABASE={os.getenv('DB2_DATABASE')};"
-                f"HOSTNAME={os.getenv('DB2_HOST')};"
-                f"PORT={os.getenv('DB2_PORT', '50000')};"
-                f"PROTOCOL={os.getenv('DB2_PROTOCOL', 'TCPIP')};"
-                f"UID={os.getenv('DB2_UID')};"
-                f"PWD={os.getenv('DB2_PWD')};"
+            patients = SearchPatient.objects.filter(
+                LASTNAME=p_sname,
+                FIRSTNAME=p_name,
+                MIDDLENAME=p_surname,
+                BDAY=p_birth
             )
 
-            conn = pyodbc.connect(connection_string)
-            cursor = conn.cursor()
-
-            query = """
-            SELECT 
-                PATIENTNUMBER, LASTNAME, FIRSTNAME, MIDDLENAME, BDAY, 
-                DOCSERIA, DOCNUMBER, SNILSNUMBER, DOCUMENTNUMBER
-            FROM PATIENTS
-            WHERE LASTNAME = ? and FIRSTNAME = ? and MIDDLENAME = ? and BDAY = ?
-            """
-
-            cursor.execute(query, p_sname, p_name, p_surname, p_birth)
-            patients = cursor.fetchall()
-
-            columns = [column[0] for column in cursor.description]
-            patients_list = []
-
-            for row in patients:
-                patient_dict = {}
-                for i, col in enumerate(columns):
-                    # Обработка даты, если это datetime объект
-                    value = row[i]
-                    if hasattr(value, 'isoformat'):
-                        value = value.isoformat()
-                    patient_dict[col] = value
-                patients_list.append(patient_dict)
-
-            if not patients:
+            if not patients.exists():
                 return Response({
                     'status': 'error',
                     'message': 'Пациенты не найдены'
                 })
 
-            cursor.close()
-            conn.close()
+            # Сериализуем все найденные объекты
+            serializer = SearchPatientSerializer(patients, many=True)
 
             return Response({
                 'status': 'success',
-                'message': f'Найдено {len(patients_list)} пациентов',
-                'patients': patients_list
+                'patients': serializer.data,
+                'message': f'Найдено {patients.count()} пациентов'
             })
-
-
-
-
-            # Сериализуем все найденные объекты
-            # serializer = SearchPatientSerializer(patients, many=True)
-            #
-            # return Response({
-            #     'status': 'success',
-            #     'patients': serializer.data,
-            #     'message': f'Найдено {patients.count()} пациентов'
-            # })
 
         except Exception as e:
             return Response({
                 'status': 'error',
                 'message': f'Ошибка сервера: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     @action(detail=False, methods=['post'])
     def add_patient(self, request):
@@ -152,15 +112,16 @@ class TestPatientViewSet(viewsets.ModelViewSet):
         )
         new_p_id = patient.id
         for research in s_researches:
-            try:
-                research_date = research.get('ACTUALDATETIME')
-                if research_date and len(research_date) >= 10:
-                    date_str = research_date[:10]  # берем только дату
-                    research_date = date_str
-                else:
-                    research_date = None
-            except:
-                research_date = None
+            # Извлекаем только дату через split
+            research_date_str = str(research.get('ACTUALDATETIME'))
+            research_date = None
+
+            if research_date_str:
+                # Разделяем строку по символу T и берем первую часть
+                parts = research_date_str.split('T')
+                if len(parts) > 0:
+                    research_date = parts[0][:10]
+                    print(research_date)
 
             patient_obj = Patient.objects.get(id=new_p_id)
             Research.objects.create(
@@ -172,4 +133,28 @@ class TestPatientViewSet(viewsets.ModelViewSet):
         return patient.id
 
 
+    @action(detail=False, methods=['post'])
+    def update_patient_researches(self, request):
+        """
+        Просто вызывает add_patient с тем же PATIENTNUMBER
+        Так как add_patient уже реализует логику update_or_create
+        """
+        try:
+            data = request.data
+            p_num = data.get('PATIENTNUMBER')
 
+            if not p_num:
+                return Response({
+                    'status': 'error',
+                    'message': 'Не указан PATIENTNUMBER пациента'
+                }, status=status.HTTP_400_BAD_REQUEST)
+
+            # Просто вызываем существующий endpoint add_patient
+            # Он сам реализует update_or_create логику
+            return self.add_patient(request)
+
+        except Exception as e:
+            return Response({
+                'status': 'error',
+                'message': f'Ошибка сервера: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

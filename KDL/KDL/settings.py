@@ -96,14 +96,18 @@ DATABASES = {
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='5432'),
     },
-    'source_db':{
-        'ENGINE': 'ibm_db_django',
+    'source_db': {
+        'ENGINE': 'db2_backend',
         'NAME': config('DB2_DATABASE'),
         'USER': config('DB2_UID'),
         'PASSWORD': config('DB2_PWD'),
         'HOST': config('DB2_HOST'),
-        'PORT': config('DB2_PORT'),
-        'PCONNECT' : True,
+        'PORT': config('DB2_PORT', default='50000'),
+        'OPTIONS': {
+            'driver': 'IBM DB2 ODBC DRIVER',
+            'timeout': 30,
+            # 'SCHEMA': 'DB2INST1',
+        }
     }
 }
 
