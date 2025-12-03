@@ -13,6 +13,7 @@ from email.policy import default
 from pathlib import Path
 from decouple import config
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -89,19 +90,24 @@ WSGI_APPLICATION = 'KDL.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('POSTGRES_DB'),
-        'USER': config('POSTGRES_USER'),
-        'PASSWORD': config('POSTGRES_PASSWORD'),
-        'HOST': config('POSTGRES_HOST', default='localhost'),
-        'PORT': config('POSTGRES_PORT', default='5432'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     },
-    'source_db':{
-        'ENGINE': 'ibm_db_django',
+    'source_db': {
+        'ENGINE': 'db2_backend',
         'NAME': config('DB2_DATABASE'),
         'USER': config('DB2_UID'),
         'PASSWORD': config('DB2_PWD'),
         'HOST': config('DB2_HOST'),
-        'PORT': config('DB2_PORT'),
+        'PORT': config('DB2_PORT', default='50000'),
+        'OPTIONS': {
+            'driver': 'IBM DB2 ODBC DRIVER',
+            'timeout': 30,
+            # 'SCHEMA': 'DB2INST1',
+        }
     }
 }
 
@@ -136,7 +142,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
