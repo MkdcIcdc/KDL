@@ -36,6 +36,9 @@ class DB2CursorWrapper:
 
             # Добавляем CAST для параметров если нужно
             sql = self._add_cast_for_params(sql, params)
+            import sys
+            sys.stderr.write(f"DB2 FINAL SQL: {sql}")
+            sys.stderr.flush()
 
             return self._original_execute(sql, params)
         else:
@@ -211,17 +214,40 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         try:
             connection = pyodbc.connect(connection_string, **params)
 
-            # ⬇️ КРИТИЧЕСКИ ВАЖНО: Установите правильную кодировку ⬇️
-            # Для DB2 с русскими данными в CP1251
-            connection.setdecoding(pyodbc.SQL_CHAR, encoding='cp1251')
-            connection.setdecoding(pyodbc.SQL_WCHAR, encoding='cp1251')
-            connection.setencoding(encoding='cp1251')
+            # ⚠️ ЭТО КРИТИЧЕСКИ ВАЖНО ⚠️
+            # Ваш текущий код:
+            # connection.setdecoding(pyodbc.SQL_CHAR, encoding='cp1251')
+            # connection.setdecoding(pyodbc.SQL_WCHAR, encoding='cp1251')
+            # connection.setencoding(encoding='cp1251')
 
-            # Также можно попробовать с utf-8 для новых данных
-            # connection.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
-            # connection.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
-            # connection.setencoding(encoding='utf-8')
+            # Локально (Windows) - работает с cp1251
+            # Docker (Linux) - может требовать другую кодировку
 
+            # Добавьте отладочный вывод
+            import sys
+            sys.stderr.write("DEBUG: Устанавливаем кодировку для DB2\n")
+            sys.stderr.flush()
+
+            # Пробуйте разные варианты:
+            try:
+                # Вариант 1: UTF-8 (стандарт для Linux)
+                connection.setdecoding(pyodbc.SQL_CHAR, encoding='utf-8')
+                connection.setdecoding(pyodbc.SQL_WCHAR, encoding='utf-8')
+                connection.setencoding(encoding='utf-8')
+                sys.stderr.write("DEBUG: Установлена кодировка UTF-8\n")
+            except:
+                try:
+                    # Вариант 2: CP1251 (Windows)
+                    connection.setdecoding(pyodbc.SQL_CHAR, encoding='cp1251')
+                    connection.setdecoding(pyodbc.SQL_WCHAR, encoding='cp1251')
+                    connection.setencoding(encoding='cp1251')
+                    sys.stderr.write("DEBUG: Установлена кодировка CP1251\n")
+                except:
+                    # Вариант 3: Без указания кодировки
+                    sys.stderr.write("DEBUG: Кодировка не установлена (используется по умолчанию)\n")
+                    pass
+
+            sys.stderr.flush()
             return connection
         except pyodbc.Error as e:
             from django.db import Error
