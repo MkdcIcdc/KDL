@@ -1,12 +1,23 @@
-from datetime import datetime
-
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import connections
+
+import os
+import pyodbc
+from pathlib import Path
+from dotenv import load_dotenv
 from .models import SearchPatient
 from patient.models import Patient, Research
 from .serializer import SearchPatientSerializer, AddPatientSerializer, PatientResearchSerializer
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_path = BASE_DIR / '.env'
+load_dotenv(env_path)
+
+# Проверка загрузки переменных (для отладки)
+print(f"DB2_HOST: {os.getenv('DB2_HOST')}")
+print(f"DB2_DATABASE: {os.getenv('DB2_DATABASE')}")
 
 
 class TestPatientViewSet(viewsets.ModelViewSet):
@@ -26,21 +37,6 @@ class TestPatientViewSet(viewsets.ModelViewSet):
             p_name = data.get('name')
             p_surname = data.get('surname')
             p_birth = data.get('date_birth')
-
-            if p_birth:
-                try:
-                    dt = datetime.strptime(p_birth, '%d.%m.%Y')
-                    p_birth = dt.strftime('%Y-%m-%d')
-                except ValueError:
-                    pass
-
-            import sys
-
-            sys.stderr.write(f"DEBUG: Фамилия: {p_sname}\n")
-            sys.stderr.write(f"DEBUG: Имя: {p_name}\n")
-            sys.stderr.write(f"DEBUG: Отчество: {p_surname}\n")
-            sys.stderr.write(f"DEBUG: Дата рождения: {p_birth}\n")
-            sys.stderr.flush()
 
             patients = SearchPatient.objects.filter(
                 LASTNAME=p_sname,
